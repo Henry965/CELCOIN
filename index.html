@@ -1,154 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CEL COIN</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<header class="navbar">
-<div class="logo">
-<span class="gray">CEL</span><span class="teal">COIN</span>
-</div>
-<button class="btn-primary" onclick="openModal()">Login / Register</button>
-</header>
-<section class="hero"></section>
-<div class="container">
-<div class="badge">
-<i class="fa-solid fa-shield-halved"></i>
-<span>MINE YOUR WAY INTO GREATNESS</span>
-</div>
-<h1>EARN CRYPTO<br><span>Just With Your Device</span></h1>
-<p>CEL Coin is a digital currency you mine and wait for launch which will automatically be listed,giving holders the opportunity to trade and earn, Launch Date is 23 Dec. 2026</p>
-<div class="buttons">
-<a href="#" class="btn-primary" id="getStartedBtn">Get Started</a>
-</div>
-</section>
-<!-- WRAP BOTH FORMS INSIDE MODAL -->
-<div id="authModal" class="modal">
-  <div class="modal-content">
-    <span class="close-btn" onclick="closeModal()">×</span>
-   
-    <!-- TABS -->
-    <div class="tab-header">
-      <div id="tabLogin" class="tab active" onclick="showLogin()">Login</div>
-      <div id="tabRegister" class="tab" onclick="showRegister()">Register</div>
-    </div>
-
-    <!-- LOGIN FORM -->
-    <form id="login">
-      <h2>Welcome Back</h2>
-      <input type="email" id="loginEmail" placeholder="Email Address" required>
-      <br><br>
-      <input type="password" id="loginPassword" placeholder="Password" required>
-      <br><br>
-      <button type="submit" class="btn-primary">Login</button>
-    </form>
-
-    <!-- REGISTER FORM -->
-    <form id="register" style="display:none;">
-      <h2>Create Account</h2>
-      <input type="text" id="regName" placeholder="Full Name" required>
-      <br><br>
-      <input type="email" id="regEmail" placeholder="Email Address" required>
-      <br><br>
-      <input type="password" id="regPassword" placeholder="Password" required>
-      <br><br>
-      <input type="text" id="regReferral" placeholder="Referral Email - Optional">
-      <br><br>
-      <button type="submit" class="btn-primary">Create Account</button>
-    </form>
-   
-  </div>
-</div>
-</body>
- 
-<script>
-let users = JSON.parse(localStorage.getItem('users')) || [];
-
-// REGISTER
-document.getElementById('register').onsubmit = function(e){
-  e.preventDefault();
-  let name = document.getElementById('regName').value.trim();
-  let email = document.getElementById('regEmail').value.trim().toLowerCase();
-  let pass = document.getElementById('regPassword').value.trim();
-  let ref = document.getElementById('regReferral').value.trim().toLowerCase();
- 
-  if(users.find(u=>u.email===email)){
-    alert('Email already exists');
-    return;
-  }
- 
-  // 1. NEW USER BALANCE: 100 IF REFERRED, 0 IF NOT
-  let startingBalance = ref ? 100 : 0;
- 
-  let newUser = {
-    name,
-    email,
-    password: pass,
-    balance: startingBalance, // ALL BALANCE NOW STORED HERE
-    referrals: 0,
-    referredBy: ref || null,
-    joinDate: new Date().toLocaleDateString()
-  };
- 
-  users.push(newUser);
- 
-  // 2. GIVE REFERRER BONUS + COUNT
-  if(ref){
-    let referrer = users.find(u=>u.email===ref);
-    if(referrer){
-      referrer.balance += 100;
-      referrer.referrals += 1;
-      alert('Welcome ' + name + '! You got 100 CEL. Referral bonus sent to ' + ref);
-    } else {
-      alert('Welcome ' + name + '! You got 100 CEL. But referrer not found');
-    }
-  } else {
-    alert('Welcome ' + name + '! Account created');
-  }
- 
-  // 3. SAVE + LOGIN
-  localStorage.setItem('users', JSON.stringify(users));
-  localStorage.setItem('currentUser', email);
-  localStorage.setItem('isAdmin', 'false');
-  window.location = 'dashboard.html';
-}
-
-// LOGIN
-document.getElementById('login').onsubmit = function(e){
-  e.preventDefault();
-  let email = document.getElementById('loginEmail').value.toLowerCase();
-  let pass = document.getElementById('loginPassword').value;
- 
-  // ADMIN LOGIN
-  if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){
-    localStorage.setItem('currentUser', email);
-    localStorage.setItem('isAdmin', 'true');
-    window.location = 'adminpanel.html';
-    return;
-  }
-
-  // NORMAL USER LOGIN
-  users = JSON.parse(localStorage.getItem('users')) || [];
-  let user = users.find(u=>u.email===email && u.password===pass);
-  if(user){
-    localStorage.setItem('currentUser', email);
-    localStorage.setItem('isAdmin', 'false');
-    window.location = 'dashboard.html';
-  } else {
-    alert('Invalid email or password');
-  }
-}
+<!DOCTYPE html> 
+<html> 
+  <head><title>CelCoin</title>
+ <style> 
+body{font-family:Arial; padding:20px; max-width:400px; margin:auto} 
+form{border:1px solid #ccc; padding:20px; margin:20px 0} 
+ input{display:block; width:95%; margin:10px 0; padding:8px} 
+button{padding:10px; background:#007bff; color:white; border:none; width:100%}
+ </style> 
+</head> 
+<body> <h1>CelCoin Login</h1>
+<h2>Register</h2> 
+<form id="regForm"> 
+  <input id="regName" placeholder="Name" required> 
+  <input id="regEmail" type="email" placeholder="Email" required>
+  <input id="regPassword" type="password" placeholder="Password" required> 
+  <input id="regReferral" placeholder="Referral Email Optional"> 
+  <button>Register</button> 
+</form>
+  <h2>Login</h2>
+  <form id="loginForm">
+<input id="loginEmail" type="email" placeholder="Email" required>
+<input id="loginPassword" type="password" placeholder="Password" required> 
+<button>Login</button>
+  </form> 
+  <script> let users = JSON.parse(localStorage.getItem('users')) || []; 
+ document.getElementById('regForm').addEventListener('submit', function(e){ e.preventDefault();
+  let name = document.getElementById('regName').value.trim(); 
+   let email = document.getElementById('regEmail').value.trim().toLowerCase(); 
+ let pass = document.getElementById('regPassword').value.trim(); 
+let ref = document.getElementById('regReferral').value.trim().toLowerCase(); 
+ if(users.find(u=>u.email===email)) return alert('Email already exists'); 
+ let newUser = {name,email,password:pass,balance: ref?100:0,referrals:0,referredBy:ref||null}; users.push(newUser); 
+if(ref){ let r = users.find(u=>u.email===ref); if(r){ r.balance += 100; }} 
+ localStorage.setItem('users', JSON.stringify(users)); 
+localStorage.setItem('currentUser', email); 
+alert('Welcome ' + name + '!'); window.location = 'dashboard.html'; }); 
+  document.getElementById('loginForm').addEventListener('submit', function(e){ e.preventDefault(); 
+ let email = document.getElementById('loginEmail').value.toLowerCase(); 
+let pass = document.getElementById('loginPassword').value; 
+if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){ localStorage.setItem('isAdmin', 'true');
+ return window.location = 'adminpanel.html'; } 
+let user = users.find(u=>u.email===email && u.password===pass); if(user){ 
+  localStorage.setItem('currentUser', email); 
+ window.location = 'dashboard.html'; } else { alert('Invalid email or password'); } });
 </script>
-
-
-<footer class="footer-bottom">
-<p>&copy; 2026 CELCOIN. All Rights Reserved.</p>
-</footer>
 </body>
 </html>
-
-
-
