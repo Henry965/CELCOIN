@@ -82,6 +82,15 @@
 function openModal(){document.getElementById('authModal').style.display='flex'}
 function closeModal(){document.getElementById('authModal').style.display='none'}
 
+// AUTO-FILL REFERRAL FROM URL
+const urlParams = new URLSearchParams(window.location.search);
+const refFromUrl = urlParams.get('ref');
+if(refFromUrl){
+  document.getElementById('regReferral').value = refFromUrl;
+  openModal(); // Auto open register form
+  document.getElementById('regForm').scrollIntoView();
+}
+
 let users = JSON.parse(localStorage.getItem('users')) || [];
 
 document.getElementById('regForm').addEventListener('submit', function(e){
@@ -93,14 +102,22 @@ document.getElementById('regForm').addEventListener('submit', function(e){
   
   if(users.find(u=>u.email===email)) return alert('Email already exists');
   
-  let newUser = {name,email,password:pass,balance: ref?100:0,referrals:0,referredBy:ref||null};
+  let bonus = ref ? 100 : 0; // New user gets 100 if referred
+  let newUser = {name,email,password:pass,balance: bonus,referrals:0,referredBy:ref||null,joinDate:new Date().toLocaleDateString()};
   users.push(newUser);
   
-  if(ref){ let r = users.find(u=>u.email===ref); if(r){ r.balance += 100; r.referrals += 1; }}
+  // GIVE BONUS TO REFERRER + INCREASE COUNT
+  if(ref){ 
+    let r = users.find(u=>u.email===ref); 
+    if(r){ 
+      r.balance += 100; // Referrer gets 100
+      r.referrals += 1; // Increase ref count
+    }
+  }
   
   localStorage.setItem('users', JSON.stringify(users));
   localStorage.setItem('currentUser', email);
-  alert('Welcome ' + name + '!');
+  alert('Welcome ' + name + '! You got ' + bonus + ' CEL bonus');
   window.location = 'dashboard.html';
 });
 
