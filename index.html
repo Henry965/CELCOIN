@@ -28,7 +28,7 @@
 <!-- WRAP BOTH FORMS INSIDE MODAL -->
 <div id="authModal" class="modal">
   <div class="modal-content">
-    <span class="close-btn" onclick="closeModal()">×</span>
+    <span class="close-btn" onclick="closeModal()">Ã—</span>
    
     <!-- TABS -->
     <div class="tab-header">
@@ -136,7 +136,18 @@ document.getElementById('register').onsubmit = function(e){
   localStorage.setItem('balance_' + email, newBal);
   window.location = 'dashboard.html';
 }
+document.addEventListener( 'DOMContentLoaded'. function() {
+const urlParams = new URLSearchParams(window.location.search);
+  const referrer = urlParams.get('ref');
 
+ if(referrer){
+   document'getElementById('regReferral').value = referrer;
+
+   document.getElementById(loginModal').style.display = 'block';
+
+  showRegister();
+  }
+  });
 </script>
 
 <footer class="footer-bottom">
