@@ -87,14 +87,15 @@ const urlParams = new URLSearchParams(window.location.search);
 const refFromUrl = urlParams.get('ref');
 if(refFromUrl){
   document.getElementById('regReferral').value = refFromUrl;
-  openModal(); // Auto open register form
-  document.getElementById('regForm').scrollIntoView();
+  openModal();
 }
-
-let users = JSON.parse(localStorage.getItem('users')) || [];
 
 document.getElementById('regForm').addEventListener('submit', function(e){
   e.preventDefault();
+  
+  // ALWAYS LOAD FRESH USERS FIRST
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  
   let name = document.getElementById('regName').value.trim();
   let email = document.getElementById('regEmail').value.trim().toLowerCase();
   let pass = document.getElementById('regPassword').value.trim();
@@ -102,27 +103,42 @@ document.getElementById('regForm').addEventListener('submit', function(e){
   
   if(users.find(u=>u.email===email)) return alert('Email already exists');
   
-  let bonus = ref ? 100 : 0; // New user gets 100 if referred
-  let newUser = {name,email,password:pass,balance: bonus,referrals:0,referredBy:ref||null,joinDate:new Date().toLocaleDateString()};
-  users.push(newUser);
+  let bonusForNewUser = 0;
   
-  // GIVE BONUS TO REFERRER + INCREASE COUNT
+  // 1. CHECK IF REFERRER EXISTS FIRST
   if(ref){ 
-    let r = users.find(u=>u.email===ref); 
-    if(r){ 
-      r.balance += 100; // Referrer gets 100
-      r.referrals += 1; // Increase ref count
+    let referrer = users.find(u=>u.email===ref); 
+    if(referrer){ 
+      referrer.balance += 100; // Referrer gets 100
+      referrer.referrals = (referrer.referrals || 0) + 1; // +1 to count
+      bonusForNewUser = 100; // New user also gets 100
     }
   }
   
+  // 2. CREATE NEW USER WITH BONUS
+  let newUser = {
+    name,
+    email,
+    password:pass,
+    balance: bonusForNewUser,
+    referrals:0,
+    referredBy:ref||null,
+    joinDate:new Date().toLocaleDateString()
+  };
+  users.push(newUser);
+  
+  // 3. SAVE EVERYTHING ONCE
   localStorage.setItem('users', JSON.stringify(users));
   localStorage.setItem('currentUser', email);
-  alert('Welcome ' + name + '! You got ' + bonus + ' CEL bonus');
+  localStorage.setItem('isAdmin', 'false');
+  
+  alert('Welcome ' + name + '! You got ' + bonusForNewUser + ' CEL bonus');
   window.location = 'dashboard.html';
 });
 
 document.getElementById('loginForm').addEventListener('submit', function(e){
   e.preventDefault();
+  let users = JSON.parse(localStorage.getItem('users')) || [];
   let email = document.getElementById('loginEmail').value.toLowerCase();
   let pass = document.getElementById('loginPassword').value;
   
@@ -139,5 +155,6 @@ document.getElementById('loginForm').addEventListener('submit', function(e){
   } else { alert('Invalid email or password'); }
 });
 </script>
+
 </body>
 </html>
