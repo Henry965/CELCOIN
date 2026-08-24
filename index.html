@@ -136,18 +136,25 @@ document.getElementById('register').onsubmit = function(e){
   localStorage.setItem('balance_' + email, newBal);
   window.location = 'dashboard.html';
 }
-document.addEventListener( 'DOMContentLoaded'. function() {
-const urlParams = new URLSearchParams(window.location.search);
+// AUTO FILL REFERRAL LINK V2
+document.addEventListener('DOMContentLoaded', function() {
+  const urlParams = new URLSearchParams(window.location.search);
   const referrer = urlParams.get('ref');
-
- if(referrer){
-   document'getElementById('regReferral').value = referrer;
-
-   document.getElementById(loginModal').style.display = 'block';
-
-  showRegister();
+ 
+  if(referrer){
+    // 1. Fill the referral input
+    let refInput = document.getElementById('regReferral');
+    if(refInput) refInput.value = referrer;
+   
+    // 2. CLICK THE LOGIN/REGISTER BUTTON FOR YOU
+    let loginBtn = document.getElementById('loginBtn'); // change this if your button has different id
+    if(loginBtn) loginBtn.click();
+   
+    // 3. SWITCH TO REGISTER TAB
+    setTimeout(() => { showRegister(); }, 200); // wait 200ms then switch tab
   }
-  });
+});
+
 </script>
 
 <footer class="footer-bottom">
