@@ -93,7 +93,22 @@ function showRegister(){
   document.getElementById('tabLogin').classList.remove('active');
 }
 
-// REGISTER - ONLY 1 VERSION
+// LOGIN
+document.getElementById('login').onsubmit = function(e){
+  e.preventDefault();
+  let email = document.getElementById('loginEmail').value.toLowerCase();
+  let pass = document.getElementById('loginPassword').value;
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  let user = users.find(u=>u.email===email && u.password===pass);
+  if(user){
+    localStorage.setItem('currentUser', email);
+    window.location = 'dashboard.html';
+  } else {
+    alert('Invalid email or password');
+  }
+}
+
+// REGISTER
 document.getElementById('register').onsubmit = function(e){
   e.preventDefault();
   let name = document.getElementById('regName').value.trim();
@@ -108,8 +123,10 @@ document.getElementById('register').onsubmit = function(e){
     return;
   }
  
-  // 1. CREATE NEW USER WITH 100 CEL
-  let newUser = {name, email, password: pass, balance: 100, referrals: 0, referredBy: ref || null};
+  // 1. NEW USER BALANCE: 100 IF REFERRED, 0 IF NOT
+  let startingBalance = ref ? 100 : 0;
+ 
+  let newUser = {name, email, password: pass, balance: startingBalance, referrals: 0, referredBy: ref || null};
   users.push(newUser);
  
   // 2. GIVE REFERRER BONUS + COUNT
@@ -118,12 +135,12 @@ document.getElementById('register').onsubmit = function(e){
     if(referrer){
       referrer.balance += 100;
       referrer.referrals += 1;
-      alert('Welcome ' + name + '! 100 CEL. Referral bonus sent to ' + ref);
+      alert('Welcome ' + name + '! You got 100 CEL. Referral bonus sent to ' + ref);
     } else {
-      alert('Welcome ' + name + '! 100 CEL. Referrer not found');
+      alert('Welcome ' + name + '! You got 100 CEL. But referrer not found');
     }
   } else {
-    alert('Welcome ' + name + '! 100 CEL Signup Bonus');
+    alert('Welcome ' + name + '! Account created');
   }
  
   // 3. SAVE + LOGIN
@@ -139,9 +156,8 @@ document.addEventListener('DOMContentLoaded', function() {
   if(referrer){
     let refInput = document.getElementById('regReferral');
     if(refInput) refInput.value = referrer;
-   
-    openModal(); // open modal
-    setTimeout(() => { showRegister(); }, 100); // switch to register tab
+    openModal();
+    setTimeout(() => { showRegister(); }, 100);
   }
 });
 
