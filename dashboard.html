@@ -76,10 +76,13 @@ if(!user){
 }
 
 // LOAD DATA
-document.getElementById('userName').innerText = user.name.charAt(0).toUpperCase(); // First letter
+document.getElementById('userName').innerText = user.name.charAt(0).toUpperCase();
 document.getElementById('balance').innerText = user.balance || 0;
 document.getElementById('refCount').innerText = user.referrals || 0;
-document.getElementById('refLink').value = window.location.origin + '/index.html?ref=' + currentUser;
+
+// FIX: ENCODE EMAIL FOR URL
+let refUrl = window.location.origin + '/index.html?ref=' + encodeURIComponent(currentUser);
+document.getElementById('refLink').value = refUrl;
 
 // MINING - 24hr cooldown
 function mine(){
@@ -101,12 +104,35 @@ function mine(){
 }
 
 function copyRef(){
-  document.getElementById('refLink').select();
-  document.execCommand('copy');
+  let refInput = document.getElementById('refLink');
+  refInput.select();
+  refInput.setSelectionRange(0, 99999); // For mobile
+  navigator.clipboard.writeText(refInput.value); // Better copy for mobile
   alert('Referral link copied!');
 }
 
 function logout(){
   localStorage.removeItem('currentUser');
   localStorage.removeItem('isAdmin');
-  window.location = 'index.html
+  window.location = 'index.html';
+}
+
+function saveUsers(){
+  let index = users.findIndex(u => u.email === currentUser);
+  users[index] = user;
+  localStorage.setItem('users', JSON.stringify(users));
+}
+
+// Check mining cooldown on load
+window.onload = function(){
+  let lastMine = localStorage.getItem('lastMine_' + currentUser);
+  if(lastMine){
+    let now = new Date().getTime();
+    let day = 24 * 60 * 60 * 1000;
+    if((now - lastMine) < day){
+      let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60);
+      document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours';
+    }
+  }
+}
+</script>
