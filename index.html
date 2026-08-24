@@ -65,59 +65,7 @@
 </body>
  
 <script>
-// OPEN/CLOSE MODAL
-function openModal(){
-  document.getElementById('authModal').classList.add('show');
-}
-function closeModal(){
-  document.getElementById('authModal').classList.remove('show');
-}
-
-// MAKE "GET STARTED" BUTTON OPEN MODAL
-document.getElementById('getStartedBtn').onclick = function(e){
-  e.preventDefault();
-  openModal();
-}
-
-// TABS
-function showLogin(){
-  document.getElementById('login').style.display='block';
-  document.getElementById('register').style.display='none';
-  document.getElementById('tabLogin').classList.add('active');
-  document.getElementById('tabRegister').classList.remove('active');
-}
-function showRegister(){
-  document.getElementById('login').style.display='none';
-  document.getElementById('register').style.display='block';
-  document.getElementById('tabRegister').classList.add('active');
-  document.getElementById('tabLogin').classList.remove('active');
-}
-
-// LOGIN
-document.getElementById('login').onsubmit = function(e){
-  e.preventDefault();
-  let email = document.getElementById('loginEmail').value.toLowerCase();
-  let pass = document.getElementById('loginPassword').value;
- 
-  // 1. ADMIN LOGIN CHECK
-  if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){
-    localStorage.setItem('currentUser', email);
-    localStorage.setItem('isAdmin', 'true'); // this tells admin.html you are admin
-    window.location = 'admin.html';
-    return; // stop here
-  }
-
-  // 2. NORMAL USER LOGIN
-  let users = JSON.parse(localStorage.getItem('users')) || [];
-  let user = users.find(u=>u.email===email && u.password===pass);
-  if(user){
-    localStorage.setItem('currentUser', email);
-    localStorage.setItem('isAdmin', 'false');
-    window.location = 'dashboard.html';
-  } else {
-    alert('Invalid email or password');
-  }
-}
+let users = JSON.parse(localStorage.getItem('users')) || [];
 
 // REGISTER
 document.getElementById('register').onsubmit = function(e){
@@ -127,8 +75,6 @@ document.getElementById('register').onsubmit = function(e){
   let pass = document.getElementById('regPassword').value.trim();
   let ref = document.getElementById('regReferral').value.trim().toLowerCase();
  
-  let users = JSON.parse(localStorage.getItem('users')) || [];
- 
   if(users.find(u=>u.email===email)){
     alert('Email already exists');
     return;
@@ -137,7 +83,16 @@ document.getElementById('register').onsubmit = function(e){
   // 1. NEW USER BALANCE: 100 IF REFERRED, 0 IF NOT
   let startingBalance = ref ? 100 : 0;
  
-  let newUser = {name, email, password: pass, balance: startingBalance, referrals: 0, referredBy: ref || null joinDate:new Date().toLocalDateString()};
+  let newUser = {
+    name,
+    email,
+    password: pass,
+    balance: startingBalance, // ALL BALANCE NOW STORED HERE
+    referrals: 0,
+    referredBy: ref || null,
+    joinDate: new Date().toLocaleDateString()
+  };
+ 
   users.push(newUser);
  
   // 2. GIVE REFERRER BONUS + COUNT
@@ -157,22 +112,37 @@ document.getElementById('register').onsubmit = function(e){
   // 3. SAVE + LOGIN
   localStorage.setItem('users', JSON.stringify(users));
   localStorage.setItem('currentUser', email);
+  localStorage.setItem('isAdmin', 'false');
   window.location = 'dashboard.html';
 }
 
-// AUTO FILL REFERRAL LINK
-document.addEventListener('DOMContentLoaded', function() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const referrer = urlParams.get('ref');
-  if(referrer){
-    let refInput = document.getElementById('regReferral');
-    if(refInput) refInput.value = referrer;
-    openModal();
-    setTimeout(() => { showRegister(); }, 100);
+// LOGIN
+document.getElementById('login').onsubmit = function(e){
+  e.preventDefault();
+  let email = document.getElementById('loginEmail').value.toLowerCase();
+  let pass = document.getElementById('loginPassword').value;
+ 
+  // ADMIN LOGIN
+  if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){
+    localStorage.setItem('currentUser', email);
+    localStorage.setItem('isAdmin', 'true');
+    window.location = 'adminpanel.html';
+    return;
   }
-});
 
+  // NORMAL USER LOGIN
+  users = JSON.parse(localStorage.getItem('users')) || [];
+  let user = users.find(u=>u.email===email && u.password===pass);
+  if(user){
+    localStorage.setItem('currentUser', email);
+    localStorage.setItem('isAdmin', 'false');
+    window.location = 'dashboard.html';
+  } else {
+    alert('Invalid email or password');
+  }
+}
 </script>
+
 
 <footer class="footer-bottom">
 <p>&copy; 2026 CELCOIN. All Rights Reserved.</p>
