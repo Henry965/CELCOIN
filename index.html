@@ -66,8 +66,12 @@
  
 <script>
 // OPEN/CLOSE MODAL
-function openModal(){ document.getElementById('authModal').classList.add('show'); }
-function closeModal(){ document.getElementById('authModal').classList.remove('show'); }
+function openModal(){
+  document.getElementById('authModal').classList.add('show');
+}
+function closeModal(){
+  document.getElementById('authModal').classList.remove('show');
+}
 
 // MAKE "GET STARTED" BUTTON OPEN MODAL
 document.getElementById('getStartedBtn').onclick = function(e){
@@ -82,12 +86,20 @@ function showLogin(){
   document.getElementById('tabLogin').classList.add('active');
   document.getElementById('tabRegister').classList.remove('active');
 }
+function showRegister(){
+  document.getElementById('login').style.display='none';
+  document.getElementById('register').style.display='block';
+  document.getElementById('tabRegister').classList.add('active');
+  document.getElementById('tabLogin').classList.remove('active');
+}
+
+// REGISTER - ONLY 1 VERSION
 document.getElementById('register').onsubmit = function(e){
   e.preventDefault();
-  let name = document.getElementById('regName').value;
-  let email = document.getElementById('regEmail').value.toLowerCase();
-  let pass = document.getElementById('regPassword').value;
-  let ref = document.getElementById('regReferral').value.toLowerCase();
+  let name = document.getElementById('regName').value.trim();
+  let email = document.getElementById('regEmail').value.trim().toLowerCase();
+  let pass = document.getElementById('regPassword').value.trim();
+  let ref = document.getElementById('regReferral').value.trim().toLowerCase();
  
   let users = JSON.parse(localStorage.getItem('users')) || [];
  
@@ -96,11 +108,11 @@ document.getElementById('register').onsubmit = function(e){
     return;
   }
  
-  // CREATE NEW USER
+  // 1. CREATE NEW USER WITH 100 CEL
   let newUser = {name, email, password: pass, balance: 100, referrals: 0, referredBy: ref || null};
   users.push(newUser);
  
-  // GIVE REFERRER BONUS
+  // 2. GIVE REFERRER BONUS + COUNT
   if(ref){
     let referrer = users.find(u=>u.email===ref);
     if(referrer){
@@ -114,64 +126,22 @@ document.getElementById('register').onsubmit = function(e){
     alert('Welcome ' + name + '! 100 CEL Signup Bonus');
   }
  
-  // SAVE + LOGIN
+  // 3. SAVE + LOGIN
   localStorage.setItem('users', JSON.stringify(users));
   localStorage.setItem('currentUser', email);
   window.location = 'dashboard.html';
 }
 
-
-document.getElementById('register').onsubmit = function(e){
-  e.preventDefault();
-  let name = document.getElementById('regName').value;
-  let email = document.getElementById('regEmail').value.toLowerCase();
-  let pass = document.getElementById('regPassword').value;
- 
-  // GET REFERRER FROM URL ?ref=email
-  const urlParams = new URLSearchParams(window.location.search);
-  let referrer = urlParams.get('ref');
- 
-  let users = JSON.parse(localStorage.getItem('users')) || [];
-  if(users.find(u => u.email === email)) return alert('Email already exists');
-
-  let newBal = 0;
- 
-  // IF REFERRER EXISTS, GIVE THEM 100 CEL
-  if(referrer){
-    let refUser = users.find(u => u.email === referrer);
-    if(refUser){
-      let rBal = parseFloat(localStorage.getItem('balance_' + referrer)) || 0;
-      localStorage.setItem('balance_' + referrer, rBal + 100);
-      referrer.referrals += 1;
-      alert(referrer + ' got 100 CEL bonus!'); // remove this later
-    }
-  }
-
-  // NEW USER GETS 0 OR 100 IF THEY WERE REFERRED
-  if(referrer) newBal = 100;
-
-  users.push({name, email, password:pass, referrer: referrer || '', referrals:[]});
-  localStorage.setItem('users', JSON.stringify(users));
-  localStorage.setItem('currentUser', email);
-  localStorage.setItem('balance_' + email, newBal);
-  window.location = 'dashboard.html';
-}
-// AUTO FILL REFERRAL LINK V2
+// AUTO FILL REFERRAL LINK
 document.addEventListener('DOMContentLoaded', function() {
   const urlParams = new URLSearchParams(window.location.search);
   const referrer = urlParams.get('ref');
- 
   if(referrer){
-    // 1. Fill the referral input
     let refInput = document.getElementById('regReferral');
     if(refInput) refInput.value = referrer;
    
-    // 2. CLICK THE LOGIN/REGISTER BUTTON FOR YOU
-    let loginBtn = document.getElementById('loginBtn'); // change this if your button has different id
-    if(loginBtn) loginBtn.click();
-   
-    // 3. SWITCH TO REGISTER TAB
-    setTimeout(() => { showRegister(); }, 200); // wait 200ms then switch tab
+    openModal(); // open modal
+    setTimeout(() => { showRegister(); }, 100); // switch to register tab
   }
 });
 
