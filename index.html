@@ -98,10 +98,21 @@ document.getElementById('login').onsubmit = function(e){
   e.preventDefault();
   let email = document.getElementById('loginEmail').value.toLowerCase();
   let pass = document.getElementById('loginPassword').value;
+ 
+  // 1. ADMIN LOGIN CHECK
+  if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){
+    localStorage.setItem('currentUser', email);
+    localStorage.setItem('isAdmin', 'true'); // this tells admin.html you are admin
+    window.location = 'admin.html';
+    return; // stop here
+  }
+
+  // 2. NORMAL USER LOGIN
   let users = JSON.parse(localStorage.getItem('users')) || [];
   let user = users.find(u=>u.email===email && u.password===pass);
   if(user){
     localStorage.setItem('currentUser', email);
+    localStorage.setItem('isAdmin', 'false');
     window.location = 'dashboard.html';
   } else {
     alert('Invalid email or password');
