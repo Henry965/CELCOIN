@@ -82,24 +82,47 @@ function showLogin(){
   document.getElementById('tabLogin').classList.add('active');
   document.getElementById('tabRegister').classList.remove('active');
 }
-function showRegister(){
-  document.getElementById('login').style.display='none';
-  document.getElementById('register').style.display='block';
-  document.getElementById('tabRegister').classList.add('active');
-  document.getElementById('tabLogin').classList.remove('active');
-}
-
-// KEEP YOUR LOGIN/REGISTER JS HERE
-document.getElementById('login').onsubmit = function(e){
+document.getElementById('register').onsubmit = function(e){
   e.preventDefault();
-  let email = document.getElementById('loginEmail').value.toLowerCase();
-  let pass = document.getElementById('loginPassword').value;
+  let name = document.getElementById('regName').value;
+  let email = document.getElementById('regEmail').value.toLowerCase();
+  let pass = document.getElementById('regPassword').value;
+  let ref = document.getElementById('regReferral').value.toLowerCase(); // GET REFERRAL
+ 
   let users = JSON.parse(localStorage.getItem('users')) || [];
-  let user = users.find(u => u.email === email && u.password === pass);
-  if(user){
-    localStorage.setItem('currentUser', email);
-    window.location = 'dashboard.html';
-  } else alert('Wrong email or password');
+ 
+  if(users.find(u=>u.email===email)) return alert('Email already exists');
+ 
+  // 1. CREATE NEW USER
+  let newUser = {
+    name,
+    email,
+    password: pass,
+    balance: 100, // signup bonus
+    referrals: 0,
+    referredBy: ref || null
+  };
+ 
+  users.push(newUser);
+ 
+  // 2. GIVE REFERRER BONUS + COUNT
+  if(ref){
+    let referrer = users.find(u=>u.email===ref);
+    if(referrer){
+      referrer.balance += 100;        // ADD 100 CEL BONUS
+      referrer.referrals += 1;        // ADD +1 TO REFERRAL COUNT  <-- THIS FIXES IT
+      alert(`Welcome ${name}! 100 CEL. Referral bonus sent to ${ref}`);
+    } else {
+      alert(`Welcome ${name}! 100 CEL. Note: Referrer not found`);
+    }
+  } else {
+    alert(`Welcome ${name}! 100 CEL Signup Bonus`);
+  }
+ 
+  // 3. SAVE AND LOGIN
+  localStorage.setItem('users', JSON.stringify(users));
+  localStorage.setItem('currentUser', email);
+  window.location = 'dashboard.html';
 }
 
 document.getElementById('register').onsubmit = function(e){
