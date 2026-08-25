@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><title>Admin Panel</title>
+<script src="//api.backendless.com/sdk/js/latest/backendless.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
 body{background:#0f172a;color:white;padding:40px}
@@ -13,6 +14,7 @@ th{background:#334155;color:#14b8a6}
 .btn-back{background:#14b8a6;color:white;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;margin-bottom:20px}
 .btn-bonus{background:#22c55e;color:white;padding:8px 15px;border:none;border-radius:6px;cursor:pointer;font-weight:700}
 .btn-bonus:hover{background:#16a34a}
+.btn-red{background:#ef4444;color:white;padding:8px 15px;border:none;border-radius:6px;cursor:pointer;font-weight:700}
 .bonus-form{display:flex;gap:10px;margin-bottom:20px}
 .bonus-form input{padding:12px;border:none;border-radius:8px;background:#334155;color:white}
 </style>
@@ -22,110 +24,136 @@ th{background:#334155;color:#14b8a6}
 <h1>👑 CEL COIN ADMIN PANEL</h1>
 
 <div class="stats">
-  <div class="stat-card"><h3>TOTAL USERS</h3><div class="num" id="totalUsers">0</div></div>
-  <div class="stat-card"><h3>TOTAL CEL MINED</h3><div class="num" id="totalCel">0</div></div>
-  <div class="stat-card"><h3>TOTAL REFERRALS</h3><div class="num" id="totalRefs">0</div></div>
+<div class="stat-card"><h3>TOTAL USERS</h3><div class="num" id="totalUsers">0</div></div>
+<div class="stat-card"><h3>TOTAL CEL MINED</h3><div class="num" id="totalCel">0</div></div>
+<div class="stat-card"><h3>TOTAL REFERRALS</h3><div class="num" id="totalRefs">0</div></div>
 </div>
 
 <h3 style="margin:20px 0">Send Bonus to User</h3>
 <div class="bonus-form">
-  <input type="email" id="bonusEmail" placeholder="User Email">
-  <input type="number" id="bonusAmount" placeholder="Amount CEL" value="100">
-  <button class="btn-bonus" onclick="sendBonus()">Send Bonus</button>
+<input type="email" id="bonusEmail" placeholder="User Email">
+<input type="number" id="bonusAmount" placeholder="Amount CEL" value="100">
+<button class="btn-bonus" onclick="sendBonus()">Send Bonus</button>
 </div>
 
 <table>
-  <thead>
-    <tr>
-      <th>#</th><th>Name</th><th>Email</th><th>Balance</th><th>Referrals</th><th>Referred By</th><th>Action</th>
-    </tr>
-  </thead>
-  <tbody id="userTable"></tbody>
+<thead>
+<tr><th>#</th><th>Name</th><th>Email</th><th>Balance</th><th>Referrals</th><th>Referred By</th><th>Action</th></tr>
+</thead>
+<tbody id="userTable"></tbody>
+</table>
+
+<h3 style="margin:30px 0 20px 0; color:#14b8a6">Withdrawal Requests</h3>
+<table>
+<thead>
+<tr><th>#</th><th>Email</th><th>Amount</th><th>Wallet</th><th>Status</th><th>Action</th></tr>
+</thead>
+<tbody id="withdrawTable"></tbody>
 </table>
 
 <script>
-// COOKIE HELPERS
-function getCookie(name){ let v=document.cookie.match('(^|;)?'+name+'=([^;]*)(;|$)'); return v? v[2]: null; }
-function getUsers(){ return JSON.parse(getCookie('users') || '[]'); }
-function setCookie(name,value,days){ let d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/"; }
+// BACKENDLESS SETUP
+Backendless.initApp('9FCDC961-9B0A-4C69-B461-93E55A07BA66', '1D7B1EB4-11B4-4FE9-99D6-D146155BA699');
 
 // BLOCK NON-ADMIN
-if(getCookie('isAdmin') !== 'true' || getCookie('currentUser') !== 'philip00mark@yahoo.com'){ 
-  alert('Access Denied'); 
-  window.location = 'index.html'; 
+if(localStorage.getItem('isAdmin') !== 'true'){
+  alert('Access Denied');
+  window.location = 'index.html';
 }
 
-function loadUsers(){ 
-  let users = getUsers();
+async function loadUsers(){
+  let users = await Backendless.Data.of("Users").find();
   
-  // RECALCULATE REFERRALS FOR EVERYONE LIVE
-  users.forEach(u => { 
-    u.referrals = users.filter(x => x.referredBy === u.email).length; 
-  });
+  let totalCel = 0;
+  let totalRefs = 0;
+  let tbody = '';
   
-  let totalCel = 0; 
-  let totalRefs = 0; 
-  let tbody = ''; 
-  
-  users.forEach((user, i) => { 
+  users.forEach((user, i) => {
     let bal = user.balance || 0;
-    let refCount = user.referrals || 0; 
-    totalCel += bal; 
-    totalRefs += refCount; 
+    let refCount = user.referrals || 0;
+    totalCel += bal;
+    totalRefs += refCount;
     
-    tbody += `<tr> 
-      <td>${i+1}</td> 
-      <td>${user.name}</td> 
-      <td>${user.email}</td> 
-      <td><b>${bal} CEL</b></td> 
-      <td>${refCount}</td> 
-      <td>${user.referredBy || '-'}</td> 
-      <td><button class="btn-bonus" onclick="quickBonus('${user.email}')">+100 CEL</button></td> 
-    </tr>` 
+    tbody += `<tr>
+      <td>${i+1}</td>
+      <td>${user.name}</td>
+      <td>${user.email}</td>
+      <td><b>${bal} CEL</b></td>
+      <td>${refCount}</td>
+      <td>${user.referral || '-'}</td>
+      <td><button class="btn-bonus" onclick="quickBonus('${user.objectId}')">+100 CEL</button></td>
+    </tr>`
   });
   
-  document.getElementById('userTable').innerHTML = tbody; 
-  document.getElementById('totalUsers').innerText = users.length; 
-  document.getElementById('totalCel').innerText = totalCel; 
-  document.getElementById('totalRefs').innerText = totalRefs; 
-} 
+  document.getElementById('userTable').innerHTML = tbody;
+  document.getElementById('totalUsers').innerText = users.length;
+  document.getElementById('totalCel').innerText = totalCel;
+  document.getElementById('totalRefs').innerText = totalRefs;
+  
+  loadWithdrawals(); // load withdrawals too
+}
 
-function sendBonus(){ 
-  let email = document.getElementById('bonusEmail').value.toLowerCase(); 
-  let amount = parseFloat(document.getElementById('bonusAmount').value); 
-  let users = getUsers(); 
-  let user = users.find(u => u.email === email); 
+async function loadWithdrawals(){
+  let withdrawals = await Backendless.Data.of("Withdrawals").find();
+  let tbody = '';
   
-  if(!user) return alert('User not found'); 
-  if(!amount || amount <= 0) return alert('Enter valid amount'); 
+  withdrawals.forEach((w, i) => {
+    tbody += `<tr>
+      <td>${i+1}</td>
+      <td>${w.email}</td>
+      <td>${w.amount} CEL</td>
+      <td>${w.wallet}</td>
+      <td>${w.status}</td>
+      <td>
+        <button class="btn-bonus" onclick="updateWithdraw('${w.objectId}','Approved')">Approve</button>
+        <button class="btn-red" onclick="updateWithdraw('${w.objectId}','Rejected')">Reject</button>
+      </td>
+    </tr>`
+  });
   
-  user.balance += amount; 
-  setCookie('users', JSON.stringify(users), 365);
-  
-  alert(`Sent ${amount} CEL to ${user.name}`); 
-  loadUsers(); 
-  document.getElementById('bonusEmail').value = ''; 
-  document.getElementById('bonusAmount').value = ''; 
-} 
+  document.getElementById('withdrawTable').innerHTML = tbody || '<tr><td colspan="6" style="text-align:center">No requests yet</td></tr>';
+}
 
-function quickBonus(email){ 
-  let users = getUsers(); 
-  let user = users.find(u => u.email === email); 
+async function sendBonus(){
+  let email = document.getElementById('bonusEmail').value.toLowerCase();
+  let amount = parseFloat(document.getElementById('bonusAmount').value);
+  if(!email || !amount) return alert('Fill all fields');
   
-  if(user){ 
-    user.balance += 100; 
-    setCookie('users', JSON.stringify(users), 365);
-    alert(`Sent 100 CEL to ${email}`); 
-    loadUsers(); 
-  } 
-} 
+  let query = "email = '" + email + "'";
+  let user = await Backendless.Data.of("Users").findFirst({where: query});
+  
+  if(!user) return alert('User not found');
+  if(amount <= 0) return alert('Enter valid amount');
+  
+  user.balance = (user.balance || 0) + amount;
+  await Backendless.Data.of("Users").save(user);
+  
+  alert(`Sent ${amount} CEL to ${user.name}`);
+  loadUsers();
+  document.getElementById('bonusEmail').value = '';
+  document.getElementById('bonusAmount').value = '100';
+}
 
-function logoutAdmin(){ 
-  document.cookie = "currentUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  document.cookie = "isAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  window.location = 'index.html'; 
-} 
+async function quickBonus(userId){
+  let user = await Backendless.Data.of("Users").findById(userId);
+  user.balance = (user.balance || 0) + 100;
+  await Backendless.Data.of("Users").save(user);
+  alert(`Sent 100 CEL to ${user.email}`);
+  loadUsers();
+}
+
+async function updateWithdraw(withdrawId, status){
+  let w = await Backendless.Data.of("Withdrawals").findById(withdrawId);
+  w.status = status;
+  await Backendless.Data.of("Withdrawals").save(w);
+  alert('Status updated to ' + status);
+  loadWithdrawals();
+}
+
+function logoutAdmin(){
+  localStorage.removeItem('isAdmin');
+  window.location = 'index.html';
+}
 
 loadUsers(); // load on start
-</script>
-</body></html>
+</script></body></html>
