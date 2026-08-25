@@ -82,19 +82,23 @@
 function openModal(){document.getElementById('authModal').style.display='flex'}
 function closeModal(){document.getElementById('authModal').style.display='none'}
 
-  window.onload = function(){
-    const urlParams = new URLSearchParams(window.location.search);
-    const ref = urlParams.get('ref');
-    if(ref){
-  document.getElementById('regReferral').value = decodeURIComponent(ref);
-      openModal(); 
+// AUTO FILL REFERRAL
+window.onload = function(){
+  const urlParams = new URLSearchParams(window.location.search);
+  const ref = urlParams.get('ref');
+  if(ref){ 
+    document.getElementById('regReferral').value = decodeURIComponent(ref);
+    openModal();
   }
-  }
+}
 
-let users = JSON.parse(localStorage.getItem('users')) || [];
-
-document.getElementById('regForm').addEventListener('submit', function(e){
-  e.preventDefault();
+// REGISTER
+document.getElementById('regForm').addEventListener('submit', function(e){ 
+  e.preventDefault(); 
+  
+  // RELOAD USERS HERE
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  
   let name = document.getElementById('regName').value.trim();
   let email = document.getElementById('regEmail').value.trim().toLowerCase();
   let pass = document.getElementById('regPassword').value.trim();
@@ -105,31 +109,45 @@ document.getElementById('regForm').addEventListener('submit', function(e){
   let newUser = {name,email,password:pass,balance: ref?100:0,referrals:0,referredBy:ref||null};
   users.push(newUser);
   
-  if(ref){ let r = users.find(u=>u.email===ref); if(r){ r.balance += 100; r.referrals += 1; }}
+  if(ref){ 
+    let r = users.find(u=>u.email===ref); 
+    if(r){ r.balance += 100; r.referrals += 1; }
+  }
   
   localStorage.setItem('users', JSON.stringify(users));
   localStorage.setItem('currentUser', email);
-  alert('Welcome ' + name + '!');
-  window.location = 'dashboard.html';
+  alert('Welcome ' + name + '! +100 CEL');
+  window.location = 'dashboard.html'; 
 });
 
-document.getElementById('loginForm').addEventListener('submit', function(e){
-  e.preventDefault();
+// LOGIN
+document.getElementById('loginForm').addEventListener('submit', function(e){ 
+  e.preventDefault(); 
+  
+  // RELOAD USERS HERE TOO
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  
   let email = document.getElementById('loginEmail').value.toLowerCase();
   let pass = document.getElementById('loginPassword').value;
   
-  if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){
-    localStorage.setItem('currentUser', email);
-    localStorage.setItem('isAdmin', 'true');
-    return window.location = 'adminpanel.html';
+  // ADMIN LOGIN
+  if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){ 
+    localStorage.setItem('currentUser', email); 
+    localStorage.setItem('isAdmin', 'true'); 
+    return window.location = 'adminpanel.html'; 
   }
+  
   let user = users.find(u=>u.email===email && u.password===pass);
-  if(user){
-    localStorage.setItem('currentUser', email);
-    localStorage.setItem('isAdmin', 'false');
-    window.location = 'dashboard.html';
-  } else { alert('Invalid email or password'); }
+  
+  if(user){ 
+    localStorage.setItem('currentUser', email); 
+    localStorage.setItem('isAdmin', 'false'); 
+    window.location = 'dashboard.html'; 
+  } else { 
+    alert('Invalid email or password'); 
+  }
 });
 </script>
+
 </body>
 </html>
