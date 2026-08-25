@@ -68,52 +68,77 @@ footer{background:#00bfa5; color:#000; text-align:center; padding:20px; font-wei
 <footer>© 2026 CEL COIN. All Rights Reserved</footer>
 
 <script>
-// BACKENDLESS SETUP - YOUR IDS
+// BACKENDLESS SETUP
 Backendless.initApp('9FCDC961-9B0A-4C69-B461-93E55A07BA66', '1D7B1EB4-11B4-4FE9-99D6-D146155BA699');
 
 function openModal(){document.getElementById('authModal').style.display='flex'}
 function closeModal(){document.getElementById('authModal').style.display='none'}
+
 function showTab(tab){
-document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-if(tab==='login'){
-document.getElementById('loginForm').style.display='block';
-document.getElementById('registerForm').style.display='none';
-document.querySelectorAll('.tab')[0].classList.add('active');
-} else {
-document.getElementById('loginForm').style.display='none';
-document.getElementById('registerForm').style.display='block';
-document.querySelectorAll('.tab')[1].classList.add('active');
-}
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(tab==='login'){
+    document.getElementById('loginForm').style.display='block';
+    document.getElementById('registerForm').style.display='none';
+    document.querySelectorAll('.tab')[0].classList.add('active');
+  } else {
+    document.getElementById('loginForm').style.display='none';
+    document.getElementById('registerForm').style.display='block';
+    document.querySelectorAll('.tab')[1].classList.add('active');
+  }
 }
 
 window.onload = function(){
-const urlParams = new URLSearchParams(window.location.search);
-const ref = urlParams.get('ref');
-if(ref){
-document.getElementById('regReferral').value = decodeURIComponent(ref);
-openModal(); showTab('register');
-}
+  const urlParams = new URLSearchParams(window.location.search);
+  const ref = urlParams.get('ref');
+  if(ref){
+    document.getElementById('regReferral').value = decodeURIComponent(ref);
+    openModal(); showTab('register');
+  }
 }
 
-// REGISTER WITH BACKENDLESS
+// REGISTER
 async function register(){
-let name = document.getElementById('regName').value.trim();
-let email = document.getElementById('regEmail').value.trim().toLowerCase();
-let pass = document.getElementById('regPassword').value.trim();
-let ref = document.getElementById('regReferral').value.trim().toLowerCase();
-if(!name ||!email ||!pass) return alert('Fill all fields');
+  let name = document.getElementById('regName').value.trim();
+  let email = document.getElementById('regEmail').value.trim().toLowerCase();
+  let pass = document.getElementById('regPassword').value.trim();
+  let ref = document.getElementById('regReferral').value.trim().toLowerCase();
+  if(!name ||!email ||!pass) return alert('Fill all fields');
+  try{
+    let user = new Backendless.User();
+    user.email = email;
+    user.password = pass;
+    user.name = name;
+    user.balance = ref? 100 : 0;
+    user.referrals = 0;
+    user.referral = ref;
+    await Backendless.UserService.register(user);
 
-try{
-let user = new Backendless.User();
-user.email = email;
-user.password = pass;
-user.name = name;
-user.balance = ref? 100 : 0;
-user.referrals = 0;
-user.referral = ref;
+    if(ref){
+      let query = "email = '" + ref + "'";
+      let referrer = await Backendless.Data.of("Users").findFirst({where: query});
+      if(referrer){
+        referrer.balance = (referrer.balance || 0) + 100;
+        referrer.referrals = (referrer.referrals || 0) + 1;
+        await Backendless.Data.of("Users").save(referrer);
+      }
+    }
+    alert('Registered Successfully!');
+    window.location = 'dashboard.html';
+  }catch(error){ alert(error.message); }
+}
 
-await Backendless.UserService.register(user);
-
-// Give referrer 100 bonus
-if(ref){
-let query = "email
+// LOGIN
+async function login(){
+  let email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  let pass = document.getElementById('loginPassword').value.trim();
+  if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){
+    localStorage.setItem('isAdmin', 'true');
+    return window.location = 'adminpanel.html';
+  }
+  try{
+    await Backendless.UserService.login(email, pass, true);
+    localStorage.setItem('isAdmin', 'false');
+    window.location = 'dashboard.html';
+  }catch(error){ alert('Invalid email or password'); }
+}
+</script>
