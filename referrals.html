@@ -49,32 +49,21 @@ if(!user){
   window.location = 'index.html'; 
 }
 
-// WAIT FOR PAGE TO LOAD THEN FILL DATA
+// FILL DATA WHEN PAGE LOADS
 window.onload = function(){
   let refLink = window.location.origin + '/?ref=' + encodeURIComponent(currentUser);
   
-  // Find the input box - it's the first input on the page
-  let linkBox = document.querySelector('input');
-  if(linkBox){ linkBox.value = refLink; }
-  
-  // Find "Total Referred: 0" and update it
-  let totalEl = document.querySelector('p'); // or find by text
-  let elements = document.querySelectorAll('*');
-  elements.forEach(el => {
-    if(el.innerText.includes('Total Referred:')){
-      el.innerText = 'Total Referred: ' + (user.referrals || 0);
-    }
-  });
+  // Use the IDs you already have
+  document.getElementById('refLink').value = refLink;
+  document.getElementById('refCount').innerText = user.referrals || 0;
 }
 
 function copyRef(){
-  let linkBox = document.querySelector('input');
-  linkBox.select();
+  document.getElementById('refLink').select();
   document.execCommand('copy');
   alert('Referral link copied!');
 }
 </script>
-
 
 
 </body>
