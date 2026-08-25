@@ -1,32 +1,31 @@
 <!DOCTYPE html> 
 <html> 
 <head> 
-<title>CELCOIN</title> 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CELCOIN - Mine Crypto</title> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-*{margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial}
-body{background:#fff; color:#333}
-header{display:flex; justify-content:space-between; align-items:center; padding:20px 5%; background:#fff; position:relative; z-index:10} /* ADDED z-index */
-.logo{font-size:28px; font-weight:bold; font-style:italic}
-.logo .cel{color:#aaa}
-.logo .coin{color:#00bfa5}
-.btn-teal{background:#00bfa5; color:#000; padding:12px 24px; border:none; border-radius:12px; font-weight:bold; font-size:16px; cursor:pointer; box-shadow:0 4px 15px rgba(0,191,165,0.3)}
-.hero{background:url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200') center/cover; padding:60px 5%; text-align:center; opacity:0.9; position:relative; z-index:1} /* ADDED z-index */
-.content{padding:40px 5%; text-align:center; position:relative; z-index:10} /* ADDED z-index */
-.badge{display:inline-block; background:#e0f7f4; color:#00bfa5; padding:10px 20px; border-radius:50px; font-weight:bold; margin-bottom:20px}
-h1{font-size:42px; color:#1a2b4b; margin:10px 0}
-h1 .green{color:#00bfa5}
-p{font-size:16px; color:#555; line-height:1.6; max-width:600px; margin:20px auto}
-.btn-get{margin-top:30px; background:#00bfa5; color:#000; padding:14px 40px; border:none; border-radius:12px; font-weight:bold; font-size:16px; cursor:pointer; box-shadow:0 4px 15px rgba(0,191,165,0.3); position:relative; z-index:999} /* ADDED z-index */
-.modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9999} /* INCREASED */
-.modal-content{background:#fff; padding:30px; border-radius:12px; width:90%; max-width:400px}
-.modal-content h2{color:#00bfa5; margin-bottom:15px}
-.modal-content input{width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:6px}
-.modal-content button{width:100%; padding:12px; background:#00bfa5; color:#fff; border:none; border-radius:6px; font-weight:bold; cursor:pointer}
-.close{float:right; font-size:24px; cursor:pointer; color:#999}
-footer{background:#00bfa5; color:#000; text-align:center; padding:20px; font-weight:bold; margin-top:40px; position:relative; z-index:1} /* ADDED z-index */
-</style>
+<style> 
+*{margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial} 
+body{background:#fff; color:#333} 
+header{display:flex; justify-content:space-between; align-items:center; padding:20px 5%; background:#fff} 
+.logo{font-size:28px; font-weight:bold; font-style:italic} 
+.logo.cel{color:#aaa}.logo.coin{color:#00bfa5} 
+.btn-teal{background:#00bfa5; color:#000; padding:12px 24px; border:none; border-radius:12px; font-weight:bold; font-size:16px; cursor:pointer} 
+.hero{background:url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200') center/cover; padding:60px 5%; text-align:center; opacity:0.9} 
+.content{padding:40px 5%; text-align:center} 
+.badge{display:inline-block; background:#e0f7f4; color:#00bfa5; padding:10px 20px; border-radius:50px; font-weight:bold; margin-bottom:20px} 
+h1{font-size:42px; color:#1a2b4b; margin:10px 0} h1.green{color:#00bfa5} 
+p{font-size:16px; color:#555; line-height:1.6; max-width:600px; margin:20px auto} 
+.btn-get{margin-top:30px; background:#00bfa5; color:#000; padding:14px 40px; border:none; border-radius:12px; font-weight:bold; font-size:16px; cursor:pointer; box-shadow:0 4px 15px rgba(0,191,165,0.3)} 
+.modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9999} 
+.modal-content{background:#fff; padding:30px; border-radius:12px; width:90%; max-width:400px} 
+.modal-content h2{color:#00bfa5; margin-bottom:15px} 
+.modal-content input{width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:6px} 
+.modal-content button{width:100%; padding:12px; background:#00bfa5; color:#fff; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:10px} 
+.close{float:right; font-size:24px; cursor:pointer; color:#999} 
+footer{background:#00bfa5; color:#000; text-align:center; padding:20px; font-weight:bold; margin-top:40px} 
+.tabs{display:flex; gap:10px; margin-bottom:15px}.tab{flex:1; padding:10px; border:none; background:#eee; border-radius:6px; cursor:pointer}.tab.active{background:#00bfa5; color:#fff}
+</style> 
 </head> 
 <body> 
 <header> 
@@ -35,82 +34,64 @@ footer{background:#00bfa5; color:#000; text-align:center; padding:20px; font-wei
 </header> 
 <div class="hero"></div> 
 <div class="content"> 
-<div class="badge">MINE YOUR WAY INTO GREATNESS</div> 
-<h1>EARN CRYPTO <br><span class="green">Just With Your Device</span></h1> 
+<span class="badge">MINE YOUR WAY INTO GREATNESS</span> 
+<h1>EARN CRYPTO<br><span class="green">Just With Your Device</span></h1> 
 <p>CEL Coin is a digital currency you mine and wait for launch which will automatically be listed, giving holders the opportunity to trade and earn. Launch Date is 23 Dec. 2026</p> 
 <button class="btn-get" onclick="openModal()">Get Started</button> 
 </div> 
-
 <div class="modal" id="authModal"> 
 <div class="modal-content"> 
 <span class="close" onclick="closeModal()">&times;</span> 
+<div class="tabs"> 
+<button class="tab active" onclick="showTab('login')">Login</button> 
+<button class="tab" onclick="showTab('register')">Register</button> 
+</div> 
+<div id="loginForm"> 
+<h2>Login</h2> 
+<input type="email" id="loginEmail" placeholder="Email"> 
+<input type="password" id="loginPass" placeholder="Password"> 
+<button onclick="login()">Login</button> 
+</div> 
+<div id="registerForm" style="display:none"> 
 <h2>Register</h2> 
-<form id="regForm"> 
-<input id="regName" placeholder="Full Name" required> 
-<input id="regEmail" type="email" placeholder="Email" required> 
-<input id="regPassword" type="password" placeholder="Password" required> 
-<input id="regReferral" placeholder="Referral Email Optional"> 
-<button>Register</button> 
-</form> 
-<h2 style="margin-top:20px">Login</h2> 
-<form id="loginForm"> 
-<input id="loginEmail" type="email" placeholder="Email" required> 
-<input id="loginPassword" type="password" placeholder="Password" required> 
-<button>Login</button> 
-</form> 
-<p id="msg" style="color:red; margin-top:10px"></p>
+<input type="text" id="regName" placeholder="Full Name"> 
+<input type="email" id="regEmail" placeholder="Email"> 
+<input type="password" id="regPass" placeholder="Password"> 
+<button onclick="register()">Register</button> 
 </div> 
 </div> 
-<footer>© 2026 CEL COIN. All Rights Reserved</footer> 
+</div> 
+<footer>2026 CEL COIN. All Rights Reserved</footer> 
 
 <script> 
 const SUPABASE_URL = 'https://zczaqmktkyztexrsqgmq.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjemFxbWt0a3l6dGV4cnNxZ21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2NDI0ODksImV4cCI6MjEwMzIxODQ4OX0.Stt1yHl4_Mui6fUUKy6G1rmImJI1bFfO7Fj9RwbtyfI'
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-function openModal(){document.getElementById('authModal').style.display='flex'} 
-function closeModal(){document.getElementById('authModal').style.display='none'} 
+function openModal(){ document.getElementById('authModal').style.display='flex'; }
+function closeModal(){ document.getElementById('authModal').style.display='none'; }
+function showTab(tab){ 
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); 
+  if(tab==='login'){ document.getElementById('loginForm').style.display='block'; document.getElementById('registerForm').style.display='none'; document.querySelectorAll('.tab')[0].classList.add('active'); } 
+  else{ document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='block'; document.querySelectorAll('.tab')[1].classList.add('active'); } 
+}
 
-window.onload = function(){ 
-  const urlParams = new URLSearchParams(window.location.search); 
-  const ref = urlParams.get('ref'); 
-  if(ref){ 
-    document.getElementById('regReferral').value = decodeURIComponent(ref); 
-    openModal(); 
-  } 
-} 
-
-// REGISTER
-document.getElementById('regForm').addEventListener('submit', async function(e){ 
-  e.preventDefault(); 
-  let name = document.getElementById('regName').value.trim(); 
-  let email = document.getElementById('regEmail').value.trim().toLowerCase(); 
-  let pass = document.getElementById('regPassword').value.trim(); 
-  let ref = document.getElementById('regReferral').value.trim().toLowerCase(); 
+async function register(){ 
+  let name = document.getElementById('regName').value; 
+  let email = document.getElementById('regEmail').value.toLowerCase(); 
+  let pass = document.getElementById('regPass').value; 
+  if(!name ||!email ||!pass) return alert('Fill all fields'); 
   
-  const { data: existing } = await supabase.from('users').select('email').eq('email', email).single()
-  if(existing) return document.getElementById('msg').innerText = 'Email already exists. Login instead';
-  
-  let balance = ref ? 100 : 0;
-  await supabase.from('users').insert([{name,email,password:pass,balance,referrals:0,referred_by:ref||''}]);
-  
-  if(ref){
-    const { data: refUser } = await supabase.from('users').select('*').eq('email', ref).single()
-    if(refUser){
-      await supabase.from('users').update({balance: refUser.balance + 100, referrals: refUser.referrals + 1}).eq('email', ref)
-    }
-  }
+  const { error } = await supabase.from('users').insert([{name:name, email:email, password:pass, balance:0, referrals:0}])
+  if(error) return alert('Email already exists');
   
   localStorage.setItem('user', email);
-  alert('Registered Successfully!'); 
-  window.location = 'dashboard.html'; 
-});
+  window.location = 'dashboard.html';
+}
 
-// LOGIN
-document.getElementById('loginForm').addEventListener('submit', async function(e){ 
-  e.preventDefault(); 
-  let email = document.getElementById('loginEmail').value.trim().toLowerCase(); 
-  let pass = document.getElementById('loginPassword').value.trim(); 
+async function login(){ 
+  let email = document.getElementById('loginEmail').value.toLowerCase(); 
+  let pass = document.getElementById('loginPass').value; 
   
   if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){ 
     localStorage.setItem('user', email); 
@@ -119,12 +100,12 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
   
   const { data } = await supabase.from('users').select('*').eq('email', email).eq('password', pass).single()
   if(data){ 
-    localStorage.setItem('user', email); 
+    localStorage.setItem('user', email);
     window.location = 'dashboard.html'; 
   } else { 
-    document.getElementById('msg').innerText = 'Invalid email or password'; 
+    alert('Invalid login'); 
   } 
-}); 
+}
 </script> 
 </body> 
 </html>
