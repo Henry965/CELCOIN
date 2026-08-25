@@ -1,125 +1,138 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>Withdraw - CELCOIN</title>
+<html>
+<head>
+<title>Withdraw - CELCOIN</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="//api.backendless.com/sdk/js/latest/backendless.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial}
-body{background:#f7f8fa;padding-bottom:80px}
+*{margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial}
+body{background:#f7f8fa; padding-bottom:80px; overflow-x:hidden}
+header{display:flex; justify-content:space-between; align-items:center; padding:20px; background:#fff}
+.logo{font-size:26px; font-weight:bold; font-style:italic}
+.logo.cel{color:#6b7280}.logo.coin{color:#00bfa5}
+
 /* MOVING YELLOW TEXT */
-.marquee{width:100%;background:#FFD700;color:#000;padding:12px 0;overflow:hidden;white-space:nowrap;font-weight:bold;font-size:14px}
-.marquee span{display:inline-block;padding-left:100%;animation:marquee 15s linear infinite}
-@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+.launch-banner{
+  background:#FFD700;
+  color:#000;
+  padding:10px 0;
+  overflow:hidden;
+  font-weight:bold;
+  font-size:16px;
+}
+.marquee{
+  display:inline-block;
+  white-space:nowrap;
+  animation:scroll 12s linear infinite;
+}
+@keyframes scroll{
+  from{transform:translateX(100%)}
+  to{transform:translateX(-100%)}
+}
 
-header{padding:20px;background:#fff;text-align:center;font-size:20px;font-weight:bold}
-.container{padding:20px;max-width:600px;margin:auto}
-.box{background:#fff;padding:25px;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.05);margin-bottom:20px}
-input{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;background:#f9f9f9;margin:10px 0;font-size:16px}
-.btn{background:#00bfa5;color:#fff;border:none;padding:14px;width:100%;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer}
-.btn:disabled{background:#ccc;cursor:not-allowed}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:12px 0;box-shadow:0 -2px 10px rgba(0,0,0,0.1)}
-.nav a{text-align:center;color:#888;text-decoration:none;font-size:12px;font-weight:bold}
+.container{padding:20px; max-width:600px; margin:auto}
+.box{background:#fff; padding:25px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.05); text-align:center; margin-bottom:20px}
+.balance-big{font-size:40px; color:#00bfa5; font-weight:bold; margin:10px 0}
+input{width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; background:#f9f9f9; margin:10px 0; font-size:14px}
+.btn{background:#00bfa5; color:#fff; border:none; padding:14px; width:100%; border-radius:10px; font-size:16px; font-weight:bold; cursor:pointer}
+.btn:disabled{background:#ccc; cursor:not-allowed; box-shadow:none}
+.btn:active{transform:scale(0.98)}
+.alert{background:#fff3cd; color:#856404; padding:12px; border-radius:8px; margin:15px 0; font-size:14px}
+.alert-red{background:#ffebee; color:#c62828}
+.history-item{background:#f7f8fa; padding:12px; border-radius:10px; margin:8px 0; text-align:left; font-size:14px}
+.nav{position:fixed; bottom:0; left:0; right:0; background:#fff; display:flex; justify-content:space-around; padding:12px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.1)}
+.nav a{text-align:center; color:#888; text-decoration:none; font-size:12px; font-weight:bold}
 .nav a.active{color:#00bfa5}
-.small{font-size:13px;color:#666;margin-top:5px}
-h1{color:#00bfa5}
 </style>
-</head><body>
+</head>
+<body>
 
-<!-- MOVABLE YELLOW TEXT -->
-<div class="marquee"><span>⚠️ THIS WITHDRAWAL FEATURE ONLY WORKS UPON OFFICIAL LAUNCH ⚠️</span></div>
+<!-- MOVING YELLOW TEXT -->
+<div class="launch-banner">
+  <div class="marquee">
+    🚀 LAUNCHING 23 DEC 2026 - WITHDRAWALS WILL BE ENABLED AFTER LAUNCH - MINE MORE CEL NOW 🚀 LAUNCHING 23 DEC 2026
+  </div>
+</div>
 
-<header>Withdraw CEL</header>
+<header>
+<div class="logo"><span class="cel">CEL</span><span class="coin">COIN</span></div>
+</header>
 
 <div class="container">
-  <div class="box">
-    <h3>Your Balance</h3>
-    <h1 id="balance">0 CEL</h1>
-    <p class="small">= <b id="naira">₦0</b></p>
-  </div>
+<div class="box">
+<h2>💰 Withdraw CEL</h2>
+<p>Your Balance</p>
+<div class="balance-big"><span id="balance">0</span> CEL</div>
+<p style="color:#999; font-size:14px">Min Withdraw: 1000 CEL</p>
+</div>
 
-  <div class="box">
-    <h3>Convert to Naira</h3>
-    <p class="small">Rate: 1 CEL = ₦200</p>
-    <input type="number" id="celAmount" placeholder="Enter CEL amount" oninput="convert()">
-    <p class="small">You will get: <b id="showNaira">₦0</b></p>
-  </div>
+<div class="box">
+<h3 style="margin-bottom:15px; color:#1a2b4b">Request Withdrawal</h3>
+<div class="alert alert-red"><b>⚠️ COMING SOON:</b> Withdrawals will be enabled after launch on 23 Dec 2026</div>
+<input type="text" id="wallet" placeholder="Enter USDT/BTC Wallet Address" required disabled>
+<input type="number" id="amount" placeholder="Amount to Withdraw" required disabled>
+<button class="btn" id="withdrawBtn" onclick="requestWithdraw()" disabled>WAIT FOR LAUNCH</button>
+</div>
 
-  <div class="box">
-    <h3>Bank Details</h3>
-    <input type="text" id="bankName" placeholder="Bank Name e.g GTBank">
-    <input type="text" id="accountName" placeholder="Account Name">
-    <input type="number" id="accountNumber" placeholder="Account Number">
-    <button class="btn" onclick="withdraw()">Request Withdrawal</button>
-    <p class="small" style="text-align:center;margin-top:10px">Min Withdrawal: 1000 CEL = ₦200,000</p>
-  </div>
+<div class="box">
+<h3 style="margin-bottom:15px; color:#1a2b4b">Withdrawal History</h3>
+<div id="history">Withdrawals will appear here after launch</div>
+</div>
+
 </div>
 
 <div class="nav">
-  <a href="dashboard.html">🏠<br>Home</a>
-  <a href="referrals.html">👥<br>Referrals</a>
-  <a href="withdraw.html" class="active">💰<br>Withdraw</a>
+<a href="dashboard.html">🏠<br>Home</a>
+<a href="referrals.html">👥<br>Referrals</a>
+<a href="withdraw.html" class="active">💰<br>Withdraw</a>
 </div>
 
 <script>
-// COOKIE HELPERS
-function getCookie(name){ let v=document.cookie.match('(^|;)?'+name+'=([^;]*)(;|$)'); return v? v[2]: null; }
-function getUsers(){ return JSON.parse(getCookie('users') || '[]'); }
-function getCurrentUser(){ return getCookie('currentUser'); }
-function setCookie(name,value,days){ let d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/"; }
+// BACKENDLESS SETUP
+Backendless.initApp('9FCDC961-9B0A-4C69-B461-93E55A07BA66', '1D7B1EB4-11B4-4FE9-99D6-D146155BA699');
 
-let currentUser = getCurrentUser();
-let users = getUsers();
-let user = users.find(u => u.email === currentUser);
-let RATE = 200; // 1 CEL = ₦200
+// CHECK LOGIN
+let currentUserEmail = localStorage.getItem('userEmail');
+let currentUserId = localStorage.getItem('userId');
 
-if(!user){ alert('Please login first'); window.location = 'index.html'; }
-
-// LOAD BALANCE
-document.getElementById('balance').innerText = (user.balance || 0) + ' CEL';
-document.getElementById('naira').innerText = '₦' + ((user.balance || 0) * RATE).toLocaleString();
-
-function convert(){
-  let cel = parseFloat(document.getElementById('celAmount').value) || 0;
-  document.getElementById('showNaira').innerText = '₦' + (cel * RATE).toLocaleString();
+if(!currentUserEmail){
+  alert('Please login first');
+  window.location = 'index.html';
 }
 
-function withdraw(){
-  let cel = parseFloat(document.getElementById('celAmount').value) || 0;
-  let bank = document.getElementById('bankName').value;
-  let accName = document.getElementById('accountName').value;
-  let accNum = document.getElementById('accountNumber').value;
-  let minCel = 1000;
+let user = null;
 
-  if(cel < minCel) return alert('Minimum withdrawal is 1000 CEL = ₦200,000');
-  if(cel > user.balance) return alert('Insufficient balance');
-  if(!bank || !accName || !accNum) return alert('Please fill all bank details');
+async function loadData(){
+  try{
+    user = await Backendless.Data.of("Users").findById(currentUserId);
+    if(!user){ window.location = 'index.html'; return; }
+   
+    document.getElementById('balance').innerText = user.balance || 0;
 
-  // DEDUCT COINS
-  user.balance -= cel;
-  let index = users.findIndex(u => u.email === currentUser);
-  users[index] = user;
-  setCookie('users', JSON.stringify(users), 365);
+    // Load withdrawal history - will be empty until launch
+    let query = "ownerId = '" + currentUserId + "'";
+    let withdrawals = await Backendless.Data.of("Withdrawals").find({where: query});
+   
+    if(withdrawals.length === 0){
+      document.getElementById('history').innerHTML = '<p style="color:#999">Withdrawals will be enabled after launch</p>';
+    } else {
+      let html = '';
+      withdrawals.forEach(w => {
+        html += `<div class="history-item"><b>${w.amount} CEL</b><br><small>Status: ${w.status} | ${w.wallet}</small></div>`;
+      });
+      document.getElementById('history').innerHTML = html;
+    }
 
-  // SAVE WITHDRAWAL REQUEST
-  let requests = JSON.parse(getCookie('withdrawRequests') || '[]');
-  requests.push({
-    email: currentUser,
-    name: user.name,
-    cel: cel,
-    naira: cel * RATE,
-    bank: bank,
-    accName: accName,
-    accNum: accNum,
-    date: new Date().toLocaleString()
-  });
-  setCookie('withdrawRequests', JSON.stringify(requests), 365);
-
-  alert(`Withdrawal request of ${cel} CEL = ₦${(cel*RATE).toLocaleString()} submitted! \nYou will be paid after launch.`);
-  
-  // RESET
-  document.getElementById('celAmount').value = '';
-  document.getElementById('showNaira').innerText = '₦0';
-  document.getElementById('balance').innerText = user.balance + ' CEL';
-  document.getElementById('naira').innerText = '₦' + (user.balance * RATE).toLocaleString();
+  }catch(e){
+    console.log(e);
+  }
 }
+
+function requestWithdraw(){
+  alert('⏰ Withdrawals will be enabled after launch on 23 Dec 2026. Keep mining!');
+}
+
+loadData();
 </script>
-
-</body></html>
+</body>
+</html>
