@@ -5,33 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 *{margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial}
-body{background:#f7f8fa; padding-bottom:40px}
-
-/* HEADER */
-header{display:flex; justify-content:space-between; align-items:center; padding:20px; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.05)}
+body{background:#f7f8fa; padding-bottom:80px}
+header{display:flex; justify-content:space-between; align-items:center; padding:20px; background:#fff}
 .logo{font-size:26px; font-weight:bold; font-style:italic}
-.logo .cel{color:#6b7280}
-.logo .coin{color:#00bfa5}
+.logo.cel{color:#6b7280}.logo.coin{color:#00bfa5}
 .btn-logout{background:#ef4444; color:#fff; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer}
-
-/* CONTENT */
 .container{padding:20px; max-width:600px; margin:auto}
 .welcome{text-align:center; font-size:28px; font-weight:bold; margin:20px 0; color:#1a2b4b}
 .welcome span{color:#00bfa5}
-
-/* BALANCE CARD */
 .balance-card{background:linear-gradient(135deg, #00bfa5 0%, #009688 100%); color:#fff; padding:30px; border-radius:20px; text-align:center; margin-bottom:20px}
-.balance-card h2{font-size:16px; font-weight:400; opacity:0.9; margin-bottom:10px}
-.balance-card h1{font-size:40px; font-weight:bold}
+.box{background:#fff; padding:25px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.05); text-align:center}
 
-/* BOXES */
-.box{background:#fff; padding:20px; border-radius:15px; margin-bottom:20px; box-shadow:0 4px 15px rgba(0,0,0,0.05)}
-.box h3{display:flex; align-items:center; gap:10px; font-size:20px; margin-bottom:8px; color:#1a2b4b}
-.box p{color:#555}
-.btn{background:#00bfa5; color:#fff; border:none; padding:14px; width:100%; border-radius:10px; font-size:16px; font-weight:bold; cursor:pointer; margin-top:15px}
-.btn:active{transform:scale(0.98)}
-input{width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; background:#f9f9f9; margin:10px 0}
+/* COIN STYLE */
+.coin{
+  width:150px; height:150px; 
+  background:radial-gradient(circle at 30% 30%, #FFD700, #FFA500);
+  border-radius:50%; 
+  margin:20px auto; 
+  display:flex; align-items:center; justify-content:center;
+  font-size:50px; font-weight:bold; color:#fff;
+  box-shadow:0 8px 25px rgba(255,165,0,0.4);
+  cursor:pointer;
+  user-select:none;
+  transition:transform 0.1s;
+}
+.coin:active{transform:scale(0.9)}
+.coin.disabled{opacity:0.5; cursor:not-allowed}
+
+.floating{
+  position:absolute; 
+  color:#00bfa5; 
+  font-weight:bold; 
+  font-size:20px;
+  animation:float 1s ease-out forwards;
+  pointer-events:none;
+}
+@keyframes float{
+  from{opacity:1; transform:translateY(0)}
+  to{opacity:0; transform:translateY(-80px)}
+}
+
 .green-text{color:#00bfa5; text-align:center; font-weight:bold; margin-top:10px}
+
+/* BOTTOM NAV */
+.nav{position:fixed; bottom:0; left:0; right:0; background:#fff; display:flex; justify-content:space-around; padding:12px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.1)}
+.nav a{text-align:center; color:#888; text-decoration:none; font-size:12px; font-weight:bold}
+.nav a.active{color:#00bfa5}
 </style>
 </head>
 <body>
@@ -50,42 +69,31 @@ input{width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; backgr
   </div>
 
   <div class="box">
-    <h3>⛏️ Mining</h3>
+    <h3>⛏️ Tap to Mine</h3>
     <p>Earn <b>50 CEL</b> every 24 hours</p>
-    <button class="btn" onclick="mine()">Mine 50 CEL</button>
-    <div class="green-text" id="mineStatus">Ready to mine!</div>
+    
+    <div class="coin" id="coin" onclick="tapCoin()">🪙</div>
+    
+    <div class="green-text" id="mineStatus">Tap the coin!</div>
   </div>
+</div>
 
-  <div class="box">
-    <h3>👥 Referrals</h3>
-    <p>Total Referred: <b id="refCount">0</b></p>
-    <p><b>Your Referral Link:</b></p>
-    <input type="text" id="refLink" readonly>
-    <button class="btn" onclick="copyRef()">Copy Link</button>
-  </div>
+<div class="nav">
+  <a href="dashboard.html" class="active">🏠<br>Home</a>
+  <a href="referrals.html">👥<br>Referrals</a>
+  <a href="withdraw.html">💰<br>Withdraw</a>
 </div>
 
 <script>
 let currentUser = localStorage.getItem('currentUser');
 let users = JSON.parse(localStorage.getItem('users')) || [];
 let user = users.find(u => u.email === currentUser);
+if(!user){ window.location = 'index.html'; }
 
-if(!user){
-  alert('Please login first');
-  window.location = 'index.html';
-}
-
-// LOAD DATA
 document.getElementById('userName').innerText = user.name.charAt(0).toUpperCase();
 document.getElementById('balance').innerText = user.balance || 0;
-document.getElementById('refCount').innerText = user.referrals || 0;
 
-// FIX: ENCODE EMAIL FOR URL
-let refUrl = window.location.origin + '/index.html?ref=' + encodeURIComponent(currentUser);
-document.getElementById('refLink').value = refUrl;
-
-// MINING - 24hr cooldown
-function mine(){
+function tapCoin(){
   let lastMine = localStorage.getItem('lastMine_' + currentUser);
   let now = new Date().getTime();
   let day = 24 * 60 * 60 * 1000;
@@ -93,46 +101,48 @@ function mine(){
   if(lastMine && (now - lastMine) < day){
     let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60);
     document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours';
+    document.getElementById('coin').classList.add('disabled');
     return;
   }
   
+  // ADD COINS
   user.balance += 50;
   localStorage.setItem('lastMine_' + currentUser, now);
   saveUsers();
   document.getElementById('balance').innerText = user.balance;
-  document.getElementById('mineStatus').innerText = 'Mined 50 CEL! Come back in 24hrs';
+  document.getElementById('mineStatus').innerText = '+50 CEL! Come back in 24hrs';
+  document.getElementById('coin').classList.add('disabled');
+  
+  // FLOATING +50 ANIMATION
+  showFloating("+50");
 }
 
-function copyRef(){
-  let refInput = document.getElementById('refLink');
-  refInput.select();
-  refInput.setSelectionRange(0, 99999); // For mobile
-  navigator.clipboard.writeText(refInput.value); // Better copy for mobile
-  alert('Referral link copied!');
+function showFloating(text){
+  let el = document.createElement('div');
+  el.className = 'floating';
+  el.innerText = text;
+  el.style.left = '50%';
+  el.style.top = '55%';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 1000);
 }
 
-function logout(){
-  localStorage.removeItem('currentUser');
-  localStorage.removeItem('isAdmin');
-  window.location = 'index.html';
-}
+function logout(){ localStorage.clear(); window.location = 'index.html'; }
+function saveUsers(){ let index = users.findIndex(u => u.email === currentUser); users[index] = user; localStorage.setItem('users', JSON.stringify(users)); }
 
-function saveUsers(){
-  let index = users.findIndex(u => u.email === currentUser);
-  users[index] = user;
-  localStorage.setItem('users', JSON.stringify(users));
-}
-
-// Check mining cooldown on load
+// Check cooldown on load
 window.onload = function(){
   let lastMine = localStorage.getItem('lastMine_' + currentUser);
   if(lastMine){
     let now = new Date().getTime();
     let day = 24 * 60 * 60 * 1000;
     if((now - lastMine) < day){
+      document.getElementById('coin').classList.add('disabled');
       let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60);
       document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours';
     }
   }
 }
 </script>
+</body>
+</html>
