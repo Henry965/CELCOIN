@@ -1,88 +1,77 @@
-﻿<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><title>Admin Panel</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:#0f172a;color:white;padding:40px}
-h1{text-align:center;margin-bottom:30px;color:#14b8a6}
-.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:30px}
-.stat-card{background:#1e293b;padding:25px;border-radius:12px;text-align:center}
-.stat-card .num{font-size:32px;font-weight:900;color:#14b8a6}
-table{width:100%;background:#1e293b;border-radius:12px;overflow:hidden;margin-bottom:20px}
-th,td{padding:15px;text-align:left;border-bottom:1px solid #334155}
-th{background:#334155;color:#14b8a6}
-.btn-back{background:#14b8a6;color:white;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;margin-bottom:20px}
-.btn-bonus{background:#22c55e;color:white;padding:8px 15px;border:none;border-radius:6px;cursor:pointer;font-weight:700}
-.btn-bonus:hover{background:#16a34a}
-.bonus-form{display:flex;gap:10px;margin-bottom:20px}
-.bonus-form input{padding:12px;border:none;border-radius:8px;background:#334155;color:white}
-</style>
-</head><body>
+<!DOCTYPE html> 
+<html><head><meta charset="UTF-8"><title>Admin Panel</title> 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style> 
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif} 
+body{background:#0f172a;color:white;padding:40px} 
+h1{text-align:center;margin-bottom:30px;color:#14b8a6} 
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:30px} 
+.stat-card{background:#1e293b;padding:25px;border-radius:12px;text-align:center} 
+.stat-card .num{font-size:32px;font-weight:900;color:#14b8a6} 
+table{width:100%;background:#1e293b;border-radius:12px;overflow:hidden;margin-bottom:20px} 
+th,td{padding:15px;text-align:left;border-bottom:1px solid #334155} 
+th{background:#334155;color:#14b8a6} 
+.btn-back{background:#14b8a6;color:white;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;margin-bottom:20px} 
+.btn-bonus{background:#22c55e;color:white;padding:8px 15px;border:none;border-radius:6px;cursor:pointer;font-weight:700} 
+.btn-bonus:hover{background:#16a34a} 
+.bonus-form{display:flex;gap:10px;margin-bottom:20px} 
+.bonus-form input{padding:12px;border:none;border-radius:8px;background:#334155;color:white} 
+</style> 
+</head><body> 
+<button class="btn-back" onclick="logoutAdmin()">← Logout Admin</button> 
+<h1>👑 CEL COIN ADMIN PANEL</h1> 
+<div class="stats"> 
+<div class="stat-card"><h3>TOTAL USERS</h3><div class="num" id="totalUsers">0</div></div> 
+<div class="stat-card"><h3>TOTAL CEL MINED</h3><div class="num" id="totalCel">0</div></div> 
+<div class="stat-card"><h3>TOTAL REFERRALS</h3><div class="num" id="totalRefs">0</div></div> 
+</div> 
+<h3 style="margin:20px 0">Send Bonus to User</h3> 
+<div class="bonus-form"> 
+<input type="email" id="bonusEmail" placeholder="User Email"> 
+<input type="number" id="bonusAmount" placeholder="Amount CEL" value="100"> 
+<button class="btn-bonus" onclick="sendBonus()">Send Bonus</button> 
+</div> 
+<table> 
+<thead> 
+<tr> <th>#</th><th>Name</th><th>Email</th><th>Balance</th><th>Referrals</th><th>Referred By</th><th>Action</th> </tr> 
+</thead> 
+<tbody id="userTable"></tbody> 
+</table> 
 
-<button class="btn-back" onclick="logoutAdmin()">← Logout Admin</button>
-<h1>👑 CEL COIN ADMIN PANEL</h1>
-
-<div class="stats">
-  <div class="stat-card"><h3>TOTAL USERS</h3><div class="num" id="totalUsers">0</div></div>
-  <div class="stat-card"><h3>TOTAL CEL MINED</h3><div class="num" id="totalCel">0</div></div>
-  <div class="stat-card"><h3>TOTAL REFERRALS</h3><div class="num" id="totalRefs">0</div></div>
-</div>
-
-<h3 style="margin:20px 0">Send Bonus to User</h3>
-<div class="bonus-form">
-  <input type="email" id="bonusEmail" placeholder="User Email">
-  <input type="number" id="bonusAmount" placeholder="Amount CEL" value="100">
-  <button class="btn-bonus" onclick="sendBonus()">Send Bonus</button>
-</div>
-
-<table>
-  <thead>
-    <tr>
-      <th>#</th><th>Name</th><th>Email</th><th>Balance</th><th>Referrals</th><th>Referred By</th><th>Action</th>
-    </tr>
-  </thead>
-  <tbody id="userTable"></tbody>
-</table>
-
-<script>
-// COOKIE HELPERS
-function getCookie(name){ let v=document.cookie.match('(^|;)?'+name+'=([^;]*)(;|$)'); return v? v[2]: null; }
-function getUsers(){ return JSON.parse(getCookie('users') || '[]'); }
-function setCookie(name,value,days){ let d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/"; }
+<script> 
+const SUPABASE_URL = 'https://zczaqmktkyztexrsqgmq.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjemFxbWt0a3l6dGV4cnNxZ21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2NDI0ODksImV4cCI6MjEwMzIxODQ4OX0.Stt1yHl4_Mui6fUUKy6G1rmImJI1bFfO7Fj9RwbtyfI'
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+const currentUser = localStorage.getItem('user');
 
 // BLOCK NON-ADMIN
-if(getCookie('isAdmin') !== 'true' || getCookie('currentUser') !== 'philip00mark@yahoo.com'){ 
-  alert('Access Denied'); 
+if(currentUser !== 'philip00mark@yahoo.com'){ 
+  alert('Access Denied. Only Admin'); 
   window.location = 'index.html'; 
 }
 
-function loadUsers(){ 
-  let users = getUsers();
-  
-  // RECALCULATE REFERRALS FOR EVERYONE LIVE
-  users.forEach(u => { 
-    u.referrals = users.filter(x => x.referredBy === u.email).length; 
-  });
+async function loadUsers(){ 
+  const { data: users } = await supabase.from('users').select('*')
   
   let totalCel = 0; 
   let totalRefs = 0; 
   let tbody = ''; 
   
   users.forEach((user, i) => { 
-    let bal = user.balance || 0;
+    let bal = user.balance || 0; 
     let refCount = user.referrals || 0; 
     totalCel += bal; 
     totalRefs += refCount; 
-    
     tbody += `<tr> 
       <td>${i+1}</td> 
       <td>${user.name}</td> 
       <td>${user.email}</td> 
       <td><b>${bal} CEL</b></td> 
       <td>${refCount}</td> 
-      <td>${user.referredBy || '-'}</td> 
+      <td>${user.referred_by || '-'}</td> 
       <td><button class="btn-bonus" onclick="quickBonus('${user.email}')">+100 CEL</button></td> 
     </tr>` 
-  });
+  }); 
   
   document.getElementById('userTable').innerHTML = tbody; 
   document.getElementById('totalUsers').innerText = users.length; 
@@ -90,42 +79,35 @@ function loadUsers(){
   document.getElementById('totalRefs').innerText = totalRefs; 
 } 
 
-function sendBonus(){ 
+async function sendBonus(){ 
   let email = document.getElementById('bonusEmail').value.toLowerCase(); 
   let amount = parseFloat(document.getElementById('bonusAmount').value); 
-  let users = getUsers(); 
-  let user = users.find(u => u.email === email); 
   
+  const { data: user } = await supabase.from('users').select('*').eq('email', email).single()
   if(!user) return alert('User not found'); 
   if(!amount || amount <= 0) return alert('Enter valid amount'); 
   
-  user.balance += amount; 
-  setCookie('users', JSON.stringify(users), 365);
-  
+  await supabase.from('users').update({balance: user.balance + amount}).eq('email', email)
   alert(`Sent ${amount} CEL to ${user.name}`); 
   loadUsers(); 
   document.getElementById('bonusEmail').value = ''; 
   document.getElementById('bonusAmount').value = ''; 
 } 
 
-function quickBonus(email){ 
-  let users = getUsers(); 
-  let user = users.find(u => u.email === email); 
-  
+async function quickBonus(email){ 
+  const { data: user } = await supabase.from('users').select('*').eq('email', email).single()
   if(user){ 
-    user.balance += 100; 
-    setCookie('users', JSON.stringify(users), 365);
+    await supabase.from('users').update({balance: user.balance + 100}).eq('email', email)
     alert(`Sent 100 CEL to ${email}`); 
     loadUsers(); 
   } 
 } 
 
 function logoutAdmin(){ 
-  document.cookie = "currentUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  document.cookie = "isAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  localStorage.removeItem('user');
   window.location = 'index.html'; 
 } 
 
-loadUsers(); // load on start
-</script>
+loadUsers(); // load on start 
+</script> 
 </body></html>
