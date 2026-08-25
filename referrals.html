@@ -34,35 +34,86 @@ input{width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; backgr
   <a href="withdraw.html">💰<br>Withdraw</a>
 </div>
 <script>
-function loadReferral(){
-  let currentUser = localStorage.getItem('currentUser');
-  let users = JSON.parse(localStorage.getItem('users')) || [];
-  let user = users.find(u => u.email === currentUser);
-  
-  if(!user){
-    alert('Please login first');
-    window.location = 'index.html';
-    return;
-  }
-  
-  document.getElementById('refCount').innerText = user.referrals || 0;
-  
-  // FIX: Use full domain instead of window.location.origin
-  let refUrl = 'https://celcoin.onrender.com/index.html?ref=' + encodeURIComponent(currentUser);
-  document.getElementById('refLink').value = refUrl;
+// COOKIE HELPERS - ADD ON TOP
+function getCookie(name){ let v=document.cookie.match('(^|;)?'+name+'=([^;]*)(;|$)'); return v? v[2]: null; }
+function getUsers(){ return JSON.parse(getCookie('users') || '[]'); }
+function getCurrentUser(){ return getCookie('currentUser'); }
+function setCookie(name,value,days){ let d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/"; }
+
+// YOUR FIXED CODE STARTS HERE
+let currentUser = getCurrentUser(); 
+let users = getUsers(); 
+let user = users.find(u => u.email === currentUser); 
+
+if(!user){ 
+  window.location = 'index.html'; 
 }
 
-function copyRef(){ 
-  let refInput = document.getElementById('refLink');
-  refInput.select();
-  refInput.setSelectionRange(0, 99999);
-  navigator.clipboard.writeText(refInput.value); 
-  alert('Referral link copied!'); 
-}
+document.getElementById('userName').innerText = user.name.charAt(0).toUpperCase(); 
+document.getElementById('balance').innerText = user.balance || 0; 
 
-// Run when page loads
-window.onload = loadReferral;
+function tapCoin(){ 
+  let lastMine = getCookie('lastMine_' + currentUser); 
+  let now = new Date().getTime(); 
+  let day = 24 * 60 * 60 * 1000; 
+  
+  if(lastMine && (now - lastMine) < day){ 
+    let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60); 
+    document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours'; 
+    document.getElementById('coin').classList.add('disabled'); 
+    return; 
+  } 
+  
+  // ADD COINS
+  user.balance += 50; 
+  setCookie('lastMine_' + currentUser, now, 365); 
+  saveUsers(); 
+  
+  document.getElementById('balance').innerText = user.balance; 
+  document.getElementById('mineStatus').innerText = '+50 CEL! Come back in 24hrs'; 
+  document.getElementById('coin').classList.add('disabled'); 
+  
+  // FLOATING +50 ANIMATION
+  showFloating("+50"); 
+} 
+
+function showFloating(text){ 
+  let el = document.createElement('div'); 
+  el.className = 'floating'; 
+  el.innerText = text; 
+  el.style.left = '50%'; 
+  el.style.top = '55%'; 
+  document.body.appendChild(el); 
+  setTimeout(()=>el.remove(), 1000); 
+} 
+
+function logout(){ 
+  document.cookie = "currentUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "users=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  window.location = 'index.html'; 
+} 
+
+function saveUsers(){ 
+  let index = users.findIndex(u => u.email === currentUser); 
+  users[index] = user; 
+  setCookie('users', JSON.stringify(users), 365); 
+} 
+
+// Check cooldown on load
+window.onload = function(){ 
+  let lastMine = getCookie('lastMine_' + currentUser); 
+  if(lastMine){ 
+    let now = new Date().getTime(); 
+    let day = 24 * 60 * 60 * 1000; 
+    if((now - lastMine) < day){ 
+      document.getElementById('coin').classList.add('disabled'); 
+      let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60); 
+      document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours'; 
+    } 
+  } 
+}
 </script>
+
 
 </body>
 </html>
