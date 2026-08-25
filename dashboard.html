@@ -1,130 +1,107 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>CELCOIN Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-*{margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial}
-body{background:#f7f8fa; padding-bottom:80px}
-header{display:flex; justify-content:space-between; align-items:center; padding:20px; background:#fff}
-.logo{font-size:26px; font-weight:bold; font-style:italic}
-.logo.cel{color:#6b7280}.logo.coin{color:#00bfa5}
-.btn-logout{background:#ef4444; color:#fff; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer}
-.container{padding:20px; max-width:600px; margin:auto}
-.welcome{text-align:center; font-size:28px; font-weight:bold; margin:20px 0; color:#1a2b4b}
-.welcome span{color:#00bfa5}
-.balance-card{background:linear-gradient(135deg, #00bfa5 0%, #009688 100%); color:#fff; padding:30px; border-radius:20px; text-align:center; margin-bottom:20px}
-.box{background:#fff; padding:25px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.05); text-align:center}
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>CELCOIN Dashboard</title> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style> 
+*{margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial} 
+body{background:#f7f8fa; padding-bottom:80px} 
+header{display:flex; justify-content:space-between; align-items:center; padding:20px; background:#fff} 
+.logo{font-size:26px; font-weight:bold; font-style:italic} 
+.logo.cel{color:#6b7280}.logo.coin{color:#00bfa5} 
+.btn-logout{background:#ef4444; color:#fff; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer} 
+.container{padding:20px; max-width:600px; margin:auto} 
+.welcome{text-align:center; font-size:28px; font-weight:bold; margin:20px 0; color:#1a2b4b} 
+.welcome span{color:#00bfa5} 
+.balance-card{background:linear-gradient(135deg, #00bfa5 0%, #009688 100%); color:#fff; padding:30px; border-radius:20px; text-align:center; margin-bottom:20px} 
+.box{background:#fff; padding:25px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.05); text-align:center} 
+.coin{ width:150px; height:150px; background:radial-gradient(circle at 30% 30%, #FFD700, #FFA500); border-radius:50%; margin:20px auto; display:flex; align-items:center; justify-content:center; font-size:50px; font-weight:bold; color:#fff; box-shadow:0 8px 25px rgba(255,165,0,0.4); cursor:pointer; user-select:none; transition:transform 0.1s; } 
+.coin:active{transform:scale(0.9)} 
+.coin.disabled{opacity:0.5; cursor:not-allowed} 
+.floating{ position:absolute; color:#00bfa5; font-weight:bold; font-size:20px; animation:float 1s ease-out forwards; pointer-events:none; } 
+@keyframes float{ from{opacity:1; transform:translateY(0)} to{opacity:0; transform:translateY(-80px)} } 
+.green-text{color:#00bfa5; text-align:center; font-weight:bold; margin-top:10px} 
+.nav{position:fixed; bottom:0; left:0; right:0; background:#fff; display:flex; justify-content:space-around; padding:12px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.1)} 
+.nav a{text-align:center; color:#888; text-decoration:none; font-size:12px; font-weight:bold} 
+.nav a.active{color:#00bfa5} 
+</style> 
+</head> 
+<body> 
+<header> 
+<div class="logo"><span class="cel">CEL</span><span class="coin">COIN</span></div> 
+<button class="btn-logout" onclick="logout()">Logout</button> 
+</header> 
+<div class="container"> 
+<h1 class="welcome">Welcome back, <span id="userName">H</span>!</h1> 
+<div class="balance-card"> 
+<h2>Your CEL Balance</h2> 
+<h1>CEL <span id="balance">0</span></h1> 
+</div> 
+<div class="box"> 
+<h3>⛏️ Tap to Mine</h3> 
+<p>Earn <b>50 CEL</b> every 24 hours</p> 
+<div class="coin" id="coin" onclick="tapCoin()">🪙</div> 
+<div class="green-text" id="mineStatus">Tap the coin!</div> 
+</div> 
+</div> 
+<div class="nav"> 
+<a href="dashboard.html" class="active">🏠<br>Home</a> 
+<a href="referrals.html">👥<br>Referrals</a> 
+<a href="withdraw.html">💰<br>Withdraw</a> 
+</div> 
 
-/* COIN STYLE */
-.coin{
-  width:150px; height:150px; 
-  background:radial-gradient(circle at 30% 30%, #FFD700, #FFA500);
-  border-radius:50%; 
-  margin:20px auto; 
-  display:flex; align-items:center; justify-content:center;
-  font-size:50px; font-weight:bold; color:#fff;
-  box-shadow:0 8px 25px rgba(255,165,0,0.4);
-  cursor:pointer;
-  user-select:none;
-  transition:transform 0.1s;
-}
-.coin:active{transform:scale(0.9)}
-.coin.disabled{opacity:0.5; cursor:not-allowed}
+<script> 
+const SUPABASE_URL = 'https://zczaqmktkyztexrsqgmq.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjemFxbWt0a3l6dGV4cnNxZ21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2NDI0ODksImV4cCI6MjEwMzIxODQ4OX0.Stt1yHl4_Mui6fUUKy6G1rmImJI1bFfO7Fj9RwbtyfI'
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+let currentUser = localStorage.getItem('user');
+let userData = null;
 
-.floating{
-  position:absolute; 
-  color:#00bfa5; 
-  font-weight:bold; 
-  font-size:20px;
-  animation:float 1s ease-out forwards;
-  pointer-events:none;
-}
-@keyframes float{
-  from{opacity:1; transform:translateY(0)}
-  to{opacity:0; transform:translateY(-80px)}
-}
+if(!currentUser){ window.location = 'index.html'; }
 
-.green-text{color:#00bfa5; text-align:center; font-weight:bold; margin-top:10px}
-
-/* BOTTOM NAV */
-.nav{position:fixed; bottom:0; left:0; right:0; background:#fff; display:flex; justify-content:space-around; padding:12px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.1)}
-.nav a{text-align:center; color:#888; text-decoration:none; font-size:12px; font-weight:bold}
-.nav a.active{color:#00bfa5}
-</style>
-</head>
-<body>
-
-<header>
-  <div class="logo"><span class="cel">CEL</span><span class="coin">COIN</span></div>
-  <button class="btn-logout" onclick="logout()">Logout</button>
-</header>
-
-<div class="container">
-  <h1 class="welcome">Welcome back, <span id="userName">H</span>!</h1>
-
-  <div class="balance-card">
-    <h2>Your CEL Balance</h2>
-    <h1>CEL <span id="balance">0</span></h1>
-  </div>
-
-  <div class="box">
-    <h3>⛏️ Tap to Mine</h3>
-    <p>Earn <b>50 CEL</b> every 24 hours</p>
-    
-    <div class="coin" id="coin" onclick="tapCoin()">🪙</div>
-    
-    <div class="green-text" id="mineStatus">Tap the coin!</div>
-  </div>
-</div>
-
-<div class="nav">
-  <a href="dashboard.html" class="active">🏠<br>Home</a>
-  <a href="referrals.html">👥<br>Referrals</a>
-  <a href="withdraw.html">💰<br>Withdraw</a>
-</div>
-
-<script>
-// COOKIE HELPERS - ADD ON TOP
-function getCookie(name){ let v=document.cookie.match('(^|;)?'+name+'=([^;]*)(;|$)'); return v? v[2]: null; }
-function getUsers(){ return JSON.parse(getCookie('users') || '[]'); }
-function getCurrentUser(){ return getCookie('currentUser'); }
-function setCookie(name,value,days){ let d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/"; }
-
-// YOUR FIXED CODE STARTS HERE
-let currentUser = getCurrentUser(); 
-let users = getUsers(); 
-let user = users.find(u => u.email === currentUser); 
-
-if(!user){ 
-  window.location = 'index.html'; 
-}
-
-document.getElementById('userName').innerText = user.name.charAt(0).toUpperCase(); 
-document.getElementById('balance').innerText = user.balance || 0; 
-
-function tapCoin(){ 
-  let lastMine = getCookie('lastMine_' + currentUser); 
-  let now = new Date().getTime(); 
-  let day = 24 * 60 * 60 * 1000; 
+async function loadUser(){
+  const { data } = await supabase.from('users').select('*').eq('email', currentUser).single()
+  userData = data;
+  document.getElementById('userName').innerText = data.name.charAt(0).toUpperCase();
+  document.getElementById('balance').innerText = data.balance || 0;
   
-  if(lastMine && (now - lastMine) < day){ 
-    let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60); 
-    document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours'; 
-    document.getElementById('coin').classList.add('disabled'); 
-    return; 
-  } 
+  // Check cooldown
+  if(data.last_mined){
+    let lastMine = new Date(data.last_mined).getTime();
+    let now = new Date().getTime();
+    let day = 24 * 60 * 60 * 1000;
+    if((now - lastMine) < day){
+      document.getElementById('coin').classList.add('disabled');
+      let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60);
+      document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours';
+    }
+  }
+}
+loadUser()
+
+async function tapCoin(){ 
+  if(!userData) return;
+  let now = new Date().getTime(); 
+  if(userData.last_mined){
+    let lastMine = new Date(userData.last_mined).getTime();
+    let day = 24 * 60 * 60 * 1000; 
+    if((now - lastMine) < day){ 
+      let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60); 
+      document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours'; 
+      document.getElementById('coin').classList.add('disabled'); 
+      return; 
+    } 
+  }
   
   // ADD COINS
-  user.balance += 50; 
-  setCookie('lastMine_' + currentUser, now, 365); 
-  saveUsers(); 
+  let newBalance = userData.balance + 50;
+  await supabase.from('users').update({balance: newBalance, last_mined: new Date()}).eq('email', currentUser)
   
-  document.getElementById('balance').innerText = user.balance; 
+  userData.balance = newBalance;
+  document.getElementById('balance').innerText = newBalance; 
   document.getElementById('mineStatus').innerText = '+50 CEL! Come back in 24hrs'; 
   document.getElementById('coin').classList.add('disabled'); 
-  
-  // FLOATING +50 ANIMATION
   showFloating("+50"); 
 } 
 
@@ -139,31 +116,9 @@ function showFloating(text){
 } 
 
 function logout(){ 
-  document.cookie = "currentUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  document.cookie = "users=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  localStorage.removeItem('user');
   window.location = 'index.html'; 
 } 
-
-function saveUsers(){ 
-  let index = users.findIndex(u => u.email === currentUser); 
-  users[index] = user; 
-  setCookie('users', JSON.stringify(users), 365); 
-} 
-
-// Check cooldown on load
-window.onload = function(){ 
-  let lastMine = getCookie('lastMine_' + currentUser); 
-  if(lastMine){ 
-    let now = new Date().getTime(); 
-    let day = 24 * 60 * 60 * 1000; 
-    if((now - lastMine) < day){ 
-      document.getElementById('coin').classList.add('disabled'); 
-      let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60); 
-      document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours'; 
-    } 
-  } 
-}
-</script>
-
-</body>
+</script> 
+</body> 
 </html>
