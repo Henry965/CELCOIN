@@ -82,7 +82,6 @@
 function openModal(){document.getElementById('authModal').style.display='flex'}
 function closeModal(){document.getElementById('authModal').style.display='none'}
 
-// AUTO FILL REFERRAL
 window.onload = function(){
   const urlParams = new URLSearchParams(window.location.search);
   const ref = urlParams.get('ref');
@@ -92,47 +91,41 @@ window.onload = function(){
   }
 }
 
-// REGISTER
 document.getElementById('regForm').addEventListener('submit', function(e){ 
   e.preventDefault(); 
   
-  let users = JSON.parse(localStorage.getItem('users') || '[]');
+  let users = [];
+  try{ users = JSON.parse(localStorage.getItem('users')) || []; }catch(e){ users = []; }
   
   let name = document.getElementById('regName').value.trim();
   let email = document.getElementById('regEmail').value.trim().toLowerCase();
   let pass = document.getElementById('regPassword').value.trim();
   let ref = document.getElementById('regReferral').value.trim().toLowerCase();
   
-  if(!name || !email || !pass) return alert('Fill all fields');
-  if(users.find(u=>u.email===email)) return alert('Email already exists');
+  if(users.some(u=>u.email===email)) return alert('Email already exists');
   
-  let newUser = {name:name, email:email, password:pass, balance: ref?100:0, referrals:0, referredBy:ref||''};
-  users.push(newUser);
+  users.push({name,email,password:pass,balance: ref?100:0,referrals:0,referredBy:ref||''});
   
   if(ref){ 
     let r = users.find(u=>u.email===ref); 
-    if(r){ r.balance = (r.balance || 0) + 100; r.referrals = (r.referrals || 0) + 1; }
+    if(r){ r.balance+=100; r.referrals+=1; }
   }
   
   localStorage.setItem('users', JSON.stringify(users));
   localStorage.setItem('currentUser', email);
-  
-  alert('Registered! Check console. Now logging in...');
+  alert('SAVED! Users now: ' + users.length);
   window.location = 'dashboard.html'; 
 });
 
-// LOGIN
 document.getElementById('loginForm').addEventListener('submit', function(e){ 
   e.preventDefault(); 
   
-  let users = JSON.parse(localStorage.getItem('users') || '[]');
+  let users = [];
+  try{ users = JSON.parse(localStorage.getItem('users')) || []; }catch(e){ users = []; }
+  
   let email = document.getElementById('loginEmail').value.trim().toLowerCase();
   let pass = document.getElementById('loginPassword').value.trim();
   
-  console.log('Trying to login:', email, pass);
-  console.log('Users in storage:', users);
-  
-  // ADMIN LOGIN
   if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){ 
     localStorage.setItem('currentUser', email); 
     localStorage.setItem('isAdmin', 'true'); 
@@ -146,10 +139,9 @@ document.getElementById('loginForm').addEventListener('submit', function(e){
     localStorage.setItem('isAdmin', 'false'); 
     window.location = 'dashboard.html'; 
   } else { 
-    alert('Invalid email or password. Found ' + users.length + ' users'); 
+    alert('Invalid. Total users saved: ' + users.length); 
   }
 });
 </script>
-
 </body>
 </html>
