@@ -44,81 +44,88 @@ th{background:#334155;color:#14b8a6}
 </table>
 
 <script>
+// COOKIE HELPERS
+function getCookie(name){ let v=document.cookie.match('(^|;)?'+name+'=([^;]*)(;|$)'); return v? v[2]: null; }
+function getUsers(){ return JSON.parse(getCookie('users') || '[]'); }
+function setCookie(name,value,days){ let d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/"; }
+
 // BLOCK NON-ADMIN
-if(localStorage.getItem('isAdmin') !== 'true'){
-  alert('Access Denied');
-  window.location = 'admin.html';
+if(getCookie('isAdmin') !== 'true' || getCookie('currentUser') !== 'philip00mark@yahoo.com'){ 
+  alert('Access Denied'); 
+  window.location = 'index.html'; 
 }
 
-function loadUsers(){
-  let users = JSON.parse(localStorage.getItem('users')) || [];
- 
-  // FIX 1: RECALCULATE REFERRALS FOR EVERYONE LIVE
-  users.forEach(u => {
-    u.referrals = users.filter(x => x.referredBy === u.email).length;
+function loadUsers(){ 
+  let users = getUsers();
+  
+  // RECALCULATE REFERRALS FOR EVERYONE LIVE
+  users.forEach(u => { 
+    u.referrals = users.filter(x => x.referredBy === u.email).length; 
   });
-
-  let totalCel = 0;
-  let totalRefs = 0;
-  let tbody = '';
-
-  users.forEach((user, i) => {
-    let bal = user.balance || 0; // READ FROM user.balance
-    let refCount = user.referrals || 0; // IT'S A NUMBER
-   
-    totalCel += bal;
-    totalRefs += refCount;
-
-    tbody += `<tr>
-      <td>${i+1}</td>
-      <td>${user.name}</td>
-      <td>${user.email}</td>
-      <td><b>${bal} CEL</b></td>
-      <td>${refCount}</td>
-      <td>${user.referredBy || '-'}</td>
-      <td><button class="btn-bonus" onclick="quickBonus('${user.email}')">+100 CEL</button></td>
-    </tr>`
+  
+  let totalCel = 0; 
+  let totalRefs = 0; 
+  let tbody = ''; 
+  
+  users.forEach((user, i) => { 
+    let bal = user.balance || 0;
+    let refCount = user.referrals || 0; 
+    totalCel += bal; 
+    totalRefs += refCount; 
+    
+    tbody += `<tr> 
+      <td>${i+1}</td> 
+      <td>${user.name}</td> 
+      <td>${user.email}</td> 
+      <td><b>${bal} CEL</b></td> 
+      <td>${refCount}</td> 
+      <td>${user.referredBy || '-'}</td> 
+      <td><button class="btn-bonus" onclick="quickBonus('${user.email}')">+100 CEL</button></td> 
+    </tr>` 
   });
- 
-  document.getElementById('userTable').innerHTML = tbody;
-  document.getElementById('totalUsers').innerText = users.length;
-  document.getElementById('totalCel').innerText = totalCel;
-  document.getElementById('totalRefs').innerText = totalRefs;
-}
+  
+  document.getElementById('userTable').innerHTML = tbody; 
+  document.getElementById('totalUsers').innerText = users.length; 
+  document.getElementById('totalCel').innerText = totalCel; 
+  document.getElementById('totalRefs').innerText = totalRefs; 
+} 
 
-function sendBonus(){
-  let email = document.getElementById('bonusEmail').value.toLowerCase();
-  let amount = parseFloat(document.getElementById('bonusAmount').value);
-  let users = JSON.parse(localStorage.getItem('users')) || [];
-  let user = users.find(u => u.email === email);
- 
-  if(!user) return alert('User not found');
-  if(!amount || amount <= 0) return alert('Enter valid amount');
- 
-  user.balance += amount; // UPDATE IN OBJECT
-  localStorage.setItem('users', JSON.stringify(users)); // SAVE ALL USERS
- 
-  alert(`Sent ${amount} CEL to ${user.name}`);
-  loadUsers();
-  document.getElementById('bonusEmail').value = '';
-  document.getElementById('bonusAmount').value = '';
-}
+function sendBonus(){ 
+  let email = document.getElementById('bonusEmail').value.toLowerCase(); 
+  let amount = parseFloat(document.getElementById('bonusAmount').value); 
+  let users = getUsers(); 
+  let user = users.find(u => u.email === email); 
+  
+  if(!user) return alert('User not found'); 
+  if(!amount || amount <= 0) return alert('Enter valid amount'); 
+  
+  user.balance += amount; 
+  setCookie('users', JSON.stringify(users), 365);
+  
+  alert(`Sent ${amount} CEL to ${user.name}`); 
+  loadUsers(); 
+  document.getElementById('bonusEmail').value = ''; 
+  document.getElementById('bonusAmount').value = ''; 
+} 
 
-function quickBonus(email){
-  let users = JSON.parse(localStorage.getItem('users')) || [];
-  let user = users.find(u => u.email === email);
-  if(user){
-    user.balance += 100;
-    localStorage.setItem('users', JSON.stringify(users));
-    alert(`Sent 100 CEL to ${email}`);
-    loadUsers();
-  }
-}
+function quickBonus(email){ 
+  let users = getUsers(); 
+  let user = users.find(u => u.email === email); 
+  
+  if(user){ 
+    user.balance += 100; 
+    setCookie('users', JSON.stringify(users), 365);
+    alert(`Sent 100 CEL to ${email}`); 
+    loadUsers(); 
+  } 
+} 
 
-function logoutAdmin(){
-  localStorage.removeItem('isAdmin');
-  window.location = 'admin.html';
-}
+function logoutAdmin(){ 
+  document.cookie = "currentUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "isAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  window.location = 'index.html'; 
+} 
 
 loadUsers(); // load on start
-</script></body></html>
+</script>
+</body></html>
