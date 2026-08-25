@@ -131,14 +131,22 @@ async function register(){
 async function login(){
   let email = document.getElementById('loginEmail').value.trim().toLowerCase();
   let pass = document.getElementById('loginPassword').value.trim();
+  
+  // Admin bypass
   if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){
     localStorage.setItem('isAdmin', 'true');
+    localStorage.setItem('userEmail', email); // ADD THIS
     return window.location = 'adminpanel.html';
   }
+  
   try{
-    await Backendless.UserService.login(email, pass, true);
+    let user = await Backendless.UserService.login(email, pass, true); // ADD "let user ="
     localStorage.setItem('isAdmin', 'false');
+    localStorage.setItem('userEmail', user.email); // ADD THIS LINE
+    localStorage.setItem('userId', user.objectId); // ADD THIS LINE
     window.location = 'dashboard.html';
-  }catch(error){ alert('Invalid email or password'); }
+  }catch(error){ 
+    alert('Invalid email or password'); 
+  }
 }
 </script>
