@@ -85,64 +85,85 @@ header{display:flex; justify-content:space-between; align-items:center; padding:
 </div>
 
 <script>
-let currentUser = localStorage.getItem('currentUser');
-let users = JSON.parse(localStorage.getItem('users')) || [];
-let user = users.find(u => u.email === currentUser);
-if(!user){ window.location = 'index.html'; }
+// COOKIE HELPERS - ADD ON TOP
+function getCookie(name){ let v=document.cookie.match('(^|;)?'+name+'=([^;]*)(;|$)'); return v? v[2]: null; }
+function getUsers(){ return JSON.parse(getCookie('users') || '[]'); }
+function getCurrentUser(){ return getCookie('currentUser'); }
+function setCookie(name,value,days){ let d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/"; }
 
-document.getElementById('userName').innerText = user.name.charAt(0).toUpperCase();
-document.getElementById('balance').innerText = user.balance || 0;
+// YOUR FIXED CODE STARTS HERE
+let currentUser = getCurrentUser(); 
+let users = getUsers(); 
+let user = users.find(u => u.email === currentUser); 
 
-function tapCoin(){
-  let lastMine = localStorage.getItem('lastMine_' + currentUser);
-  let now = new Date().getTime();
-  let day = 24 * 60 * 60 * 1000;
+if(!user){ 
+  window.location = 'index.html'; 
+}
+
+document.getElementById('userName').innerText = user.name.charAt(0).toUpperCase(); 
+document.getElementById('balance').innerText = user.balance || 0; 
+
+function tapCoin(){ 
+  let lastMine = getCookie('lastMine_' + currentUser); 
+  let now = new Date().getTime(); 
+  let day = 24 * 60 * 60 * 1000; 
   
-  if(lastMine && (now - lastMine) < day){
-    let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60);
-    document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours';
-    document.getElementById('coin').classList.add('disabled');
-    return;
-  }
+  if(lastMine && (now - lastMine) < day){ 
+    let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60); 
+    document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours'; 
+    document.getElementById('coin').classList.add('disabled'); 
+    return; 
+  } 
   
   // ADD COINS
-  user.balance += 50;
-  localStorage.setItem('lastMine_' + currentUser, now);
-  saveUsers();
-  document.getElementById('balance').innerText = user.balance;
-  document.getElementById('mineStatus').innerText = '+50 CEL! Come back in 24hrs';
-  document.getElementById('coin').classList.add('disabled');
+  user.balance += 50; 
+  setCookie('lastMine_' + currentUser, now, 365); 
+  saveUsers(); 
+  
+  document.getElementById('balance').innerText = user.balance; 
+  document.getElementById('mineStatus').innerText = '+50 CEL! Come back in 24hrs'; 
+  document.getElementById('coin').classList.add('disabled'); 
   
   // FLOATING +50 ANIMATION
-  showFloating("+50");
-}
+  showFloating("+50"); 
+} 
 
-function showFloating(text){
-  let el = document.createElement('div');
-  el.className = 'floating';
-  el.innerText = text;
-  el.style.left = '50%';
-  el.style.top = '55%';
-  document.body.appendChild(el);
-  setTimeout(()=>el.remove(), 1000);
-}
+function showFloating(text){ 
+  let el = document.createElement('div'); 
+  el.className = 'floating'; 
+  el.innerText = text; 
+  el.style.left = '50%'; 
+  el.style.top = '55%'; 
+  document.body.appendChild(el); 
+  setTimeout(()=>el.remove(), 1000); 
+} 
 
-function logout(){ localStorage.clear(); window.location = 'index.html'; }
-function saveUsers(){ let index = users.findIndex(u => u.email === currentUser); users[index] = user; localStorage.setItem('users', JSON.stringify(users)); }
+function logout(){ 
+  document.cookie = "currentUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "users=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  window.location = 'index.html'; 
+} 
+
+function saveUsers(){ 
+  let index = users.findIndex(u => u.email === currentUser); 
+  users[index] = user; 
+  setCookie('users', JSON.stringify(users), 365); 
+} 
 
 // Check cooldown on load
-window.onload = function(){
-  let lastMine = localStorage.getItem('lastMine_' + currentUser);
-  if(lastMine){
-    let now = new Date().getTime();
-    let day = 24 * 60 * 60 * 1000;
-    if((now - lastMine) < day){
-      document.getElementById('coin').classList.add('disabled');
-      let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60);
-      document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours';
-    }
-  }
+window.onload = function(){ 
+  let lastMine = getCookie('lastMine_' + currentUser); 
+  if(lastMine){ 
+    let now = new Date().getTime(); 
+    let day = 24 * 60 * 60 * 1000; 
+    if((now - lastMine) < day){ 
+      document.getElementById('coin').classList.add('disabled'); 
+      let hoursLeft = Math.ceil((day - (now - lastMine)) / 1000 / 60 / 60); 
+      document.getElementById('mineStatus').innerText = 'Come back in ' + hoursLeft + ' hours'; 
+    } 
+  } 
 }
 </script>
+
 </body>
 </html>
