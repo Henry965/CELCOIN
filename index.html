@@ -1,40 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>CELCOIN</title>
+<title>CELCOIN - Mine Crypto</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial}
+body{background:#fff; color:#333}
+header{display:flex; justify-content:space-between; align-items:center; padding:20px 5%; background:#fff}
+.logo{font-size:28px; font-weight:bold; font-style:italic}
+.logo.cel{color:#aaa}.logo.coin{color:#00bfa5}
+.btn-teal{background:#00bfa5; color:#000; padding:12px 24px; border:none; border-radius:12px; font-weight:bold; font-size:16px; cursor:pointer}
+.content{padding:40px 5%; text-align:center}
+.badge{display:inline-block; background:#e0f7f4; color:#00bfa5; padding:10px 20px; border-radius:50px; font-weight:bold; margin-bottom:20px}
+h1{font-size:42px; color:#1a2b4b; margin:10px 0} h1.green{color:#00bfa5}
+p{font-size:16px; color:#555; line-height:1.6; max-width:600px; margin:20px auto}
+.btn-get{margin-top:30px; background:#00bfa5; color:#000; padding:14px 40px; border:none; border-radius:12px; font-weight:bold; font-size:16px; cursor:pointer}
+.modal{display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9999}
+.modal-content{background:#fff; padding:30px; border-radius:12px; width:90%; max-width:400px; margin:100px auto}
+.close{float:right; font-size:24px; cursor:pointer; color:#999}
+footer{background:#00bfa5; color:#000; text-align:center; padding:20px; font-weight:bold; margin-top:40px}
+</style>
 </head>
-<body style="font-family:Arial; text-align:center; padding:40px">
-<h1 style="color:#00bfa5">CELCOIN</h1>
-<button onclick="openModal()" style="background:#00bfa5; padding:14px 40px; border:none; border-radius:12px; font-weight:bold; cursor:pointer">Get Started</button>
+<body>
+<header>
+<div class="logo"><span class="cel">CEL</span><span class="coin">COIN</span></div>
+<button class="btn-teal" onclick="openModal()">Login / Register</button>
+</header>
 
-<div id="authModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6)">
-<div style="background:#fff; padding:30px; border-radius:12px; width:300px; margin:100px auto">
-<span onclick="closeModal()" style="float:right; cursor:pointer">X</span>
-<h2>Register</h2>
-<input type="email" id="regEmail" placeholder="Email" style="width:100%; padding:10px; margin:10px 0">
-<input type="password" id="regPass" placeholder="Password" style="width:100%; padding:10px; margin:10px 0">
-<button onclick="register()" style="width:100%; padding:12px; background:#00bfa5; border:none; color:#fff; font-weight:bold">Register</button>
+<div class="content">
+<span class="badge">MINE YOUR WAY INTO GREATNESS</span>
+<h1>EARN CRYPTO<br><span class="green">Just With Your Device</span></h1>
+<p>CEL Coin is a digital currency you mine and wait for launch which will automatically be listed. Launch Date is 23 Dec. 2026</p>
+<button class="btn-get" onclick="openModal()">Get Started</button>
+</div>
+
+<div class="modal" id="authModal">
+<div class="modal-content">
+<span class="close" onclick="closeModal()">&times;</span>
+<h2 style="color:#00bfa5">Coming Soon!</h2>
+<p>Registration will open soon. Join our Telegram for updates.</p>
 </div>
 </div>
+
+<footer>2026 CEL COIN. All Rights Reserved</footer>
 
 <script>
-const SUPABASE_URL = 'https://zczaqmktkyztexrsqgmq.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjemFxbWt0a3l6dGV4cnNxZ21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2NDI0ODksImV4cCI6MjEwMzIxODQ4OX0.Stt1yHl4_Mui6fUUKy6G1rmImJI1bFfO7Fj9RwbtyfI'
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
-function openModal(){ document.getElementById('authModal').style.display='block'; }
+function openModal(){ document.getElementById('authModal').style.display='flex'; }
 function closeModal(){ document.getElementById('authModal').style.display='none'; }
-
-async function register(){ 
-  let email = document.getElementById('regEmail').value; 
-  let pass = document.getElementById('regPass').value; 
-  alert('Button clicked! Email: ' + email);
-  const { error } = await supabase.from('users').insert([{email:email, password:pass}])
-  if(error) alert('Error: ' + error.message);
-  else alert('Registered!');
-}
 </script>
 </body>
 </html>
