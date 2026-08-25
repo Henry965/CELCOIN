@@ -63,6 +63,7 @@ footer{background:#00bfa5; color:#000; text-align:center; padding:20px; font-wei
 </div>
 <footer>2026 CEL COIN. All Rights Reserved</footer>
 <script>
+// ONLY DECLARE SUPABASE ONCE
 const SUPABASE_URL = 'https://zczaqmktkyztexrsqgmq.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjemFxbWt0a3l6dGV4cnNxZ21xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2NDI0ODksImV4cCI6MjEwMzIxODQ4OX0.Stt1yHl4_Mui6fUUKy6G1rmImJI1bFfO7Fj9RwbtyfI'
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -80,10 +81,8 @@ async function register(){
   let email = document.getElementById('regEmail').value.toLowerCase(); 
   let pass = document.getElementById('regPass').value; 
   if(!name ||!email ||!pass) return alert('Fill all fields'); 
-  
   const { error } = await supabase.from('users').insert([{name:name, email:email, password:pass, balance:0, referrals:0}])
   if(error) return alert('Email already exists');
-  
   localStorage.setItem('user', email);
   window.location = 'dashboard.html';
 }
@@ -91,19 +90,13 @@ async function register(){
 async function login(){ 
   let email = document.getElementById('loginEmail').value.toLowerCase(); 
   let pass = document.getElementById('loginPass').value; 
-  
   if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){ 
     localStorage.setItem('user', email); 
     return window.location = 'adminpanel.html'; 
   } 
-  
   const { data, error } = await supabase.from('users').select('*').eq('email', email).eq('password', pass).single()
-  if(error ||!data){ 
-    alert('Invalid email or password'); 
-  } else { 
-    localStorage.setItem('user', email);
-    window.location = 'dashboard.html'; 
-  } 
+  if(error ||!data){ alert('Invalid email or password'); } 
+  else { localStorage.setItem('user', email); window.location = 'dashboard.html'; } 
 }
 </script>
 </body>
