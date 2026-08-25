@@ -79,6 +79,17 @@
 <footer>© 2026 CEL COIN. All Rights Reserved</footer>
 
 <script>
+function setCookie(name,value,days){
+  let d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000));
+  document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/";
+}
+function getCookie(name){
+  let v=document.cookie.match('(^|;)?'+name+'=([^;]*)(;|$)');
+  return v? v[2]: null;
+}
+function getUsers(){ return JSON.parse(getCookie('users') || '[]'); }
+function saveUsers(users){ setCookie('users', JSON.stringify(users), 365); }
+
 function openModal(){document.getElementById('authModal').style.display='flex'}
 function closeModal(){document.getElementById('authModal').style.display='none'}
 
@@ -91,18 +102,18 @@ window.onload = function(){
   }
 }
 
+// REGISTER
 document.getElementById('regForm').addEventListener('submit', function(e){ 
   e.preventDefault(); 
   
-  let users = [];
-  try{ users = JSON.parse(localStorage.getItem('users')) || []; }catch(e){ users = []; }
+  let users = getUsers();
   
   let name = document.getElementById('regName').value.trim();
   let email = document.getElementById('regEmail').value.trim().toLowerCase();
   let pass = document.getElementById('regPassword').value.trim();
   let ref = document.getElementById('regReferral').value.trim().toLowerCase();
   
-  if(users.some(u=>u.email===email)) return alert('Email already exists');
+  if(users.find(u=>u.email===email)) return alert('Email already exists');
   
   users.push({name,email,password:pass,balance: ref?100:0,referrals:0,referredBy:ref||''});
   
@@ -111,37 +122,37 @@ document.getElementById('regForm').addEventListener('submit', function(e){
     if(r){ r.balance+=100; r.referrals+=1; }
   }
   
-  localStorage.setItem('users', JSON.stringify(users));
-  localStorage.setItem('currentUser', email);
-  alert('SAVED! Users now: ' + users.length);
+  saveUsers(users);
+  setCookie('currentUser', email, 365);
+  alert('Registered! Users: ' + users.length);
   window.location = 'dashboard.html'; 
 });
 
+// LOGIN
 document.getElementById('loginForm').addEventListener('submit', function(e){ 
   e.preventDefault(); 
   
-  let users = [];
-  try{ users = JSON.parse(localStorage.getItem('users')) || []; }catch(e){ users = []; }
-  
+  let users = getUsers();
   let email = document.getElementById('loginEmail').value.trim().toLowerCase();
   let pass = document.getElementById('loginPassword').value.trim();
   
   if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){ 
-    localStorage.setItem('currentUser', email); 
-    localStorage.setItem('isAdmin', 'true'); 
+    setCookie('currentUser', email, 365); 
+    setCookie('isAdmin', 'true', 365); 
     return window.location = 'adminpanel.html'; 
   }
   
   let user = users.find(u=>u.email===email && u.password===pass);
   
   if(user){ 
-    localStorage.setItem('currentUser', email); 
-    localStorage.setItem('isAdmin', 'false'); 
+    setCookie('currentUser', email, 365); 
+    setCookie('isAdmin', 'false', 365); 
     window.location = 'dashboard.html'; 
   } else { 
-    alert('Invalid. Total users saved: ' + users.length); 
+    alert('Invalid. Total users: ' + users.length); 
   }
 });
 </script>
+
 </body>
 </html>
