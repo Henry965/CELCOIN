@@ -4,16 +4,20 @@
 <title>CELCOIN</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-*{font-family:'Segoe UI', Arial; box-sizing:border-box}
-body{background:#f7f8fa; display:flex; justify-content:center; align-items:center; height:100vh; margin:0}
-.box{background:#fff; padding:30px; border-radius:15px; width:90%; max-width:400px; box-shadow:0 4px 20px rgba(0,0,0,0.1)}
-h1{text-align:center; font-style:italic}
-.cel{color:#6b7280} .coin{color:#00bfa5}
-input{width:100%; padding:14px; margin:10px 0; border:1px solid #ddd; border-radius:8px}
-.btn{width:100%; padding:14px; background:#00bfa5; color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer; margin-top:10px}
-.tabs{display:flex; margin-bottom:20px}
-.tab{flex:1; padding:10px; background:#eee; border:none; cursor:pointer}
-.tab.active{background:#00bfa5; color:#fff}
+/* YOUR DESIGN BACK */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);display:flex;justify-content:center;align-items:center;min-height:100vh}
+.box{background:#fff;padding:35px;border-radius:20px;width:90%;max-width:400px;box-shadow:0 10px 30px rgba(0,0,0,0.3)}
+h1{text-align:center;font-size:32px;font-style:italic;margin-bottom:25px}
+.cel{color:#4b5563} .coin{color:#10b981}
+.tabs{display:flex;gap:10px;margin-bottom:20px}
+.tab{flex:1;padding:12px;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
+.tab.inactive{background:#f3f4f6;color:#6b7280}
+.tab.active{background:#10b981;color:#fff}
+input{width:100%;padding:14px;margin:10px 0;border:1px solid #e5e7eb;border-radius:10px;font-size:15px}
+input:focus{outline:2px solid #10b981}
+.btn{width:100%;padding:15px;background:#10b981;color:#fff;border:none;border-radius:12px;font-weight:bold;font-size:16px;cursor:pointer;margin-top:15px}
+.btn:hover{background:#059669}
 </style>
 </head>
 <body>
@@ -22,17 +26,17 @@ input{width:100%; padding:14px; margin:10px 0; border:1px solid #ddd; border-rad
   <h1><span class="cel">CEL</span><span class="coin">COIN</span></h1>
   
   <div class="tabs">
-    <button class="tab active" onclick="showTab('login')">Login</button>
-    <button class="tab" onclick="showTab('register')">Register</button>
+    <button class="tab inactive" onclick="showTab('login')">Login</button>
+    <button class="tab active" onclick="showTab('register')">Register</button>
   </div>
 
-  <div id="loginForm">
+  <div id="loginForm" style="display:none">
     <input type="email" id="loginEmail" placeholder="Email">
     <input type="password" id="loginPassword" placeholder="Password">
     <button class="btn" onclick="login()">Login</button>
   </div>
 
-  <div id="registerForm" style="display:none">
+  <div id="registerForm">
     <input type="text" id="regName" placeholder="Full Name">
     <input type="email" id="regEmail" placeholder="Email">
     <input type="password" id="regPassword" placeholder="Password">
@@ -42,7 +46,7 @@ input{width:100%; padding:14px; margin:10px 0; border:1px solid #ddd; border-rad
 </div>
 
 <script>
-// AUTO FILL REFERRAL FROM URL ?ref=
+// AUTO FILL REFERRAL FROM URL
 window.onload = function(){
   const urlParams = new URLSearchParams(window.location.search);
   const ref = urlParams.get('ref');
@@ -52,8 +56,10 @@ window.onload = function(){
 function showTab(tab){
   document.getElementById('loginForm').style.display = tab==='login'?'block':'none';
   document.getElementById('registerForm').style.display = tab==='register'?'block':'none';
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  event.target.classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.classList.remove('active'); t.classList.add('inactive');
+  });
+  event.target.classList.remove('inactive'); event.target.classList.add('active');
 }
 
 function register(){
@@ -70,13 +76,9 @@ function register(){
   let newUser = {name, email, password, balance:100, referrals:0, referredBy:ref || ''};
   users.push(newUser);
   
-  // Give 100 CEL to referrer
   if(ref){
     let referrer = users.find(u=>u.email===ref);
-    if(referrer){
-      referrer.balance += 100;
-      referrer.referrals += 1;
-    }
+    if(referrer){ referrer.balance += 100; referrer.referrals += 1; }
   }
   
   localStorage.setItem('users', JSON.stringify(users));
@@ -86,15 +88,21 @@ function register(){
 
 function login(){
   let email = document.getElementById('loginEmail').value.toLowerCase();
-  let password = document.getElementById('loginPassword').value;
+  let pass = document.getElementById('loginPassword').value;
+  
+  if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){
+    localStorage.setItem('currentUser', email);
+    localStorage.setItem('isAdmin', 'true');
+    return window.location = 'adminpanel.html';
+  }
   
   let users = JSON.parse(localStorage.getItem('users')) || [];
-  let user = users.find(u=>u.email===email && u.password===password);
-  
-  if(!user) return alert('Invalid email or password');
-  
-  localStorage.setItem('currentUser', email); // THIS WAS MISSING
-  window.location = 'dashboard.html';
+  let user = users.find(u=>u.email===email && u.password===pass);
+  if(user){
+    localStorage.setItem('currentUser', email);
+    localStorage.setItem('isAdmin', 'false');
+    window.location = 'dashboard.html';
+  } else { alert('Invalid email or password'); }
 }
 </script>
 </body>
