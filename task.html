@@ -191,17 +191,19 @@ let currentUserEmail = localStorage.getItem('userEmail');
 let currentUserId = localStorage.getItem('userId');
 if(!currentUserEmail) window.location='index.html';
 
-// 2 WEEKS COUNTDOWN - Special Reward
-let deadline = localStorage.getItem('taskRewardDeadline');
-if(!deadline){
-  // set 14 days from now
-  let d = new Date(); d.setDate(d.getDate()+14); deadline = d.getTime(); localStorage.setItem('taskRewardDeadline', deadline);
-} else { deadline = parseInt(deadline); }
+// 2 WEEKS COUNTDOWN - SAME DEADLINE FOR ALL USERS - Global fixed
+// Global deadline - Started yesterday 1st Sep 10pm WAT + 14 days = 15 Sep 10pm WAT - SAME FOR ALL
+// Change this date to set same deadline for all users
+const GLOBAL_CAMPAIGN_END = "2026-09-15T21:00:00Z"; // 14 days from now - same for all users
+let deadline = new Date(GLOBAL_CAMPAIGN_END).getTime();
+
 function updateCountdown(){
+  if(!deadline) return;
   let now = new Date().getTime();
   let diff = deadline - now;
   if(diff<=0){
     document.getElementById('cd-days').innerText='00'; document.getElementById('cd-hours').innerText='00'; document.getElementById('cd-mins').innerText='00'; document.getElementById('cd-secs').innerText='00';
+    checkExpiry();
     return;
   }
   let days = Math.floor(diff/(1000*60*60*24));
@@ -213,18 +215,24 @@ function updateCountdown(){
   document.getElementById('cd-mins').innerText = String(mins).padStart(2,'0');
   document.getElementById('cd-secs').innerText = String(secs).padStart(2,'0');
 }
-setInterval(updateCountdown,1000); updateCountdown();
+
+function initCountdown(){
+  updateCountdown();
+  setInterval(updateCountdown,1000);
+  setInterval(checkExpiry,1000);
+  // Show global deadline info
+  let endDate = new Date(GLOBAL_CAMPAIGN_END);
+  console.log("Global deadline for all users: ", endDate);
+}
 
 function checkExpiry(){
+  if(!deadline) return;
   let now = new Date().getTime();
-  let dl = parseInt(localStorage.getItem('taskRewardDeadline')||'0');
-  if(dl && now > dl){
-    // expired - hide tasks
+  if(now > deadline){
     let container = document.getElementById('tasksContainer');
     let noMsg = document.getElementById('noTasksMessage');
     if(container) container.style.display='none';
     if(noMsg) noMsg.style.display='block';
-    // also update hero text
     let heroSub = document.querySelector('.hero p');
     if(heroSub) heroSub.innerText = 'Special rewards period has ended - No tasks available';
   }
