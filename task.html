@@ -238,12 +238,10 @@ function checkExpiry(){
   }
 }
 
-checkExpiry();
-setInterval(checkExpiry,1000);
-
 let refCount=0;
 let rewards = JSON.parse(localStorage.getItem('taskRewards_'+currentUserEmail)||'{}');
 async function init(){
+  initCountdown();
   let user = await Backendless.Data.of("Users").findById(currentUserId);
   let link = window.location.origin + '/?ref=' + encodeURIComponent(currentUserEmail);
   document.getElementById('inviteLink').innerText = link;
