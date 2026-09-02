@@ -76,11 +76,6 @@ header{display:flex;justify-content:space-between;align-items:center;padding:14p
     </div>
     <p style="margin-top:12px;font-size:12px;color:#64748b"><span id="refCount" style="font-weight:800;color:#00bfa5;font-size:16px">0</span> friends invited</p>
   </div>
-  <div class="leaderboard">
-    <h3 style="text-align:center;font-size:14px;margin-bottom:12px">🏆 Top Inviters Leaderboard</h3>
-    <div id="leaderboardList" style="font-size:12px">Loading...</div>
-  </div>
-
   <div class="task-card" id="task-phone100">
     <div class="badge badge-locked" id="badge-phone100">LOCKED</div>
     <div class="task-top">
@@ -150,7 +145,7 @@ async function init(){
   }catch(e){ refCount = parseInt(localStorage.getItem('refCount_'+currentUserEmail)||'0'); }
   document.getElementById('refCount').innerText = refCount;
   updateUI();
-  loadLeaderboard();
+  // leaderboard removed - admin only now
 }
 async function loadLeaderboard(){
   try{
