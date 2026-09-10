@@ -276,6 +276,7 @@ const GLOBAL_CAMPAIGN_END = "2026-09-15T21:00:00Z"; // 14 days from now - same f
 const SPECIAL_CAMPAIGN_START = "2026-09-10T00:00:00Z"; // Start counting from today only
 const SPECIAL_CAMPAIGN_END = "2026-09-17T21:00:00Z"; // 7 days from today - SPECIAL TASK ONLY // 14 days from now - same for all users
 let deadline = new Date(GLOBAL_CAMPAIGN_END).getTime();
+let specialDeadline = new Date(SPECIAL_CAMPAIGN_END).getTime();
 
 function updateCountdown(){
   if(!deadline) return;
@@ -308,6 +309,9 @@ function initCountdown(){
 function checkExpiry(){
   if(!deadline) return;
   let now = new Date().getTime();
+  if(specialDeadline && now > specialDeadline){
+    let sc=document.getElementById('task-special30'); if(sc){ sc.style.opacity='0.6'; sc.style.pointerEvents='none'; let b=document.getElementById('badge-special30'); if(b){ b.innerText='EXPIRED'; b.className='badge badge-expired'; } let btn=document.getElementById('btn-special30'); if(btn){ btn.innerText='⏰ Expired'; btn.className='btn-claim expired'; } }
+  }
   if(now > deadline){
     let container = document.getElementById('tasksContainer');
     let noMsg = document.getElementById('noTasksMessage');
@@ -318,11 +322,44 @@ function checkExpiry(){
   }
 }
 
+
+function updateSpecialCountdown(){
+  if(typeof specialDeadline==='undefined' || !specialDeadline) return;
+  let now = new Date().getTime();
+  let diff = specialDeadline - now;
+  let dEl=document.getElementById('cd-special-days');
+  if(!dEl) return;
+  if(diff<=0){
+    dEl.innerText='00';
+    document.getElementById('cd-special-hours').innerText='00';
+    document.getElementById('cd-special-mins').innerText='00';
+    document.getElementById('cd-special-secs').innerText='00';
+    checkExpiry();
+    return;
+  }
+  let days = Math.floor(diff/(1000*60*60*24));
+  let hours = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  let mins = Math.floor((diff%(1000*60*60))/(1000*60));
+  let secs = Math.floor((diff%(1000*60))/1000);
+  dEl.innerText=String(days).padStart(2,'0');
+  document.getElementById('cd-special-hours').innerText=String(hours).padStart(2,'0');
+  document.getElementById('cd-special-mins').innerText=String(mins).padStart(2,'0');
+  document.getElementById('cd-special-secs').innerText=String(secs).padStart(2,'0');
+}
+function initSpecialCountdown(){
+  updateSpecialCountdown();
+  setInterval(updateSpecialCountdown,1000);
+}
+
 let refCount=0;
 let specialRefCount=0;
 let rewards = JSON.parse(localStorage.getItem('taskRewards_'+currentUserEmail)||'{}');
 async function init(){
   initCountdown();
+  initSpecialCountdown();
+  if(typeof checkIntroModal!=='undefined') checkIntroModal();
+  if(typeof setupTaskIconIntro!=='undefined') setupTaskIconIntro();
+  if(typeof checkSpecialPaymentStatus!=='undefined') checkSpecialPaymentStatus();
   let user = await Backendless.Data.of("Users").findById(currentUserId);
   let link = window.location.origin + '/?ref=' + encodeURIComponent(currentUserEmail);
   document.getElementById('inviteLink').innerText = link;
@@ -365,8 +402,46 @@ function updateUI(){
   document.getElementById('text-tv').innerText=refCount+' / 500';
   if(refCount>=500){ document.getElementById('task-tv').classList.add('unlocked'); document.getElementById('badge-tv').innerText='UNLOCKED'; document.getElementById('badge-tv').className='badge badge-unlocked'; if(!rewards.tv){ document.getElementById('btn-tv').innerText='🎉 Claim TV'; document.getElementById('btn-tv').className='btn-claim ready'; } else { document.getElementById('btn-tv').innerText='✅ Claimed'; document.getElementById('btn-tv').className='btn-claim claimed'; } }
 }
+
+function submitUsdClaim(){
+  let w=document.getElementById('usdWalletAddress').value.trim();
+  let t=document.getElementById('usdWalletType').value;
+  if(!w||w.length<10){ alert('Enter valid wallet'); return; }
+  try{
+    rewards.special30=true;
+    localStorage.setItem('taskRewards_'+currentUserEmail, JSON.stringify(rewards));
+    let payload={ email:currentUserEmail, userId:currentUserId, type:'special30', reward:'$30 USD', walletAddress:w, walletType:t, specialRefCount:typeof specialRefCount!=='undefined'?specialRefCount:0, status:'pending', claimedAt:new Date().toISOString() };
+    Backendless.Data.of("TaskClaims").save(payload).then(()=>{});
+    Backendless.Data.of("Users").save({ objectId:currentUserId, special30Reward:true, special30Wallet:w, special30Status:'pending', taskRewards:JSON.stringify(rewards) });
+    alert('Wallet submitted! Admin will verify and pay $30 within 24h.');
+    document.getElementById('usdWalletModal').style.display='none';
+    let btn=document.getElementById('btn-special30'); if(btn){ btn.innerText='⏳ Pending Verification'; btn.className='btn-claim claimed'; }
+  }catch(e){ alert('Saved - admin will verify'); document.getElementById('usdWalletModal').style.display='none'; }
+}
+function markWaClicked(){ try{ localStorage.setItem('waClicked_'+currentUserEmail,'true'); }catch(e){} }
+function claimWhatsappTask(){ if(rewards.whatsappFollow){ alert('Already claimed!'); return; } document.getElementById('whatsappClaimModal').style.display='flex'; }
+function submitWhatsappClaim(){
+  try{
+    rewards.whatsappFollow=true;
+    localStorage.setItem('taskRewards_'+currentUserEmail, JSON.stringify(rewards));
+    let payload={ email:currentUserEmail, userId:currentUserId, type:'whatsappFollow', reward:'100 CEL', status:'pending', claimedAt:new Date().toISOString() };
+    Backendless.Data.of("TaskClaims").save(payload);
+    Backendless.Data.of("Users").save({ objectId:currentUserId, whatsappFollowed:true, whatsappStatus:'pending', taskRewards:JSON.stringify(rewards) });
+    alert('Thanks! 100 CEL pending verification');
+    document.getElementById('whatsappClaimModal').style.display='none';
+    let btn=document.getElementById('btn-whatsapp'); if(btn){ btn.innerText='⏳ Pending - 100 CEL'; }
+  }catch(e){ alert('Saved'); }
+}
+function showIntroModal(){ let m=document.getElementById('introSpecialModal'); if(m) m.style.display='flex'; }
+function closeIntroModal(){ let m=document.getElementById('introSpecialModal'); if(m) m.style.display='none'; try{ localStorage.setItem('introSpecialSeen_'+currentUserEmail,'true'); }catch(e){} let c=document.getElementById('task-special30'); if(c) setTimeout(()=>{ c.scrollIntoView({behavior:'smooth',block:'center'}); },300); }
+function checkIntroModal(){ try{ let s=localStorage.getItem('introSpecialSeen_'+currentUserEmail); if(!s) setTimeout(showIntroModal,1500); }catch(e){ setTimeout(showIntroModal,1500); } }
+function setupTaskIconIntro(){ document.querySelectorAll('.nav a').forEach(a=>{ if(a.innerHTML.toLowerCase().includes('task')){ a.addEventListener('click',function(e){ try{ let s=localStorage.getItem('introSpecialSeen_'+currentUserEmail); if(!s){ e.preventDefault(); showIntroModal(); } }catch(e){} }); } }); }
+function checkSpecialPaymentStatus(){}
+
 let currentClaimType = null;
 function claimReward(type){
+  if(type==='special30'){ if(typeof specialRefCount!=='undefined' && specialRefCount<30){ alert('Invite 30 NEW! You have '+specialRefCount); return; } document.getElementById('usdWalletModal').style.display='flex'; return; }
+  if(type==='whatsapp'){ claimWhatsappTask(); return; }
   let need=type==='phone100'?100:type==='fridge'?200:500;
   if(refCount<need) return alert('Need '+need+' invites! You have '+refCount);
   if(rewards[type]) return alert('Already claimed!');
