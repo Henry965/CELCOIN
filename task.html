@@ -50,6 +50,12 @@ header{display:flex;justify-content:space-between;align-items:center;padding:14p
 .nav a{flex:1;text-align:center;color:#94a3b8;text-decoration:none;font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:16px;transition:all .2s}
 .nav a i{font-size:18px;font-style:normal}
 .nav a.active{background:#0f172a;color:#fff;box-shadow:0 4px 12px rgba(15,23,42,0.2)}
+.badge-expired{background:#fee2e2;color:#dc2626}
+.btn-claim.expired{background:#fee2e2;color:#dc2626;border:1px solid #fecaca;cursor:not-allowed}
+.task-card.special{border:2px solid #10b981;background:linear-gradient(135deg,#ffffff 0%, #ecfdf5 100%)}
+.task-card.special.unlocked{border:2px solid #10b981;box-shadow:0 12px 32px rgba(16,185,129,0.25)}
+.special-header{background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:6px 12px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:1px;display:inline-flex;align-items:center;gap:4px;margin-bottom:8px}
+
 .whatsapp-float{position:fixed;width:56px;height:56px;bottom:90px;right:20px;background:#25D366;border-radius:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(37,211,102,0.4);z-index:25;animation:pulse-whatsapp 2s infinite;text-decoration:none}
 @keyframes pulse-whatsapp{0%{box-shadow:0 0 0 0 rgba(37,211,102,0.7)}70%{box-shadow:0 0 0 14px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
 .whatsapp-float svg{width:28px;height:28px;fill:white}
@@ -85,7 +91,67 @@ header{display:flex;justify-content:space-between;align-items:center;padding:14p
     </div>
     <p style="margin-top:12px;font-size:12px;color:#64748b"><span id="refCount" style="font-weight:800;color:#00bfa5;font-size:16px">0</span> friends invited</p>
   </div>
+
+<!-- SPECIAL TASK - 7 DAYS ONLY - COUNTS FROM TODAY ONLY -->
+<div id="task-special30" class="task-card special" style="border:2px solid #10b981;">
+  <span class="badge badge-grand" id="badge-special30" style="background:#10b981;">$30 INSTANT • 7 DAYS</span>
+  <div class="special-header">⚡ SPECIAL TASK - 7 DAY COUNTDOWN - NEW REFERRALS ONLY</div>
+  <div class="task-top">
+    <div class="reward-img" style="background:#ecfdf5;border-color:#a7f3d0;">
+      <div style="width:100%;height:100%;display:grid;place-items:center;font-size:36px;">💵</div>
+    </div>
+    <div class="task-info">
+      <h3>Win $30 Instantly</h3>
+      <p>Invite <b>30 NEW friends</b> from today only to win <b>$30 instantly</b>. This counts only referrals registered after <b>Sept 10, 2026</b>. Fast action reward!</p>
+    </div>
+  </div>
+  
+  <!-- Special countdown -->
+  <div style="margin-top:12px;background:#f0fdf4;border:1px solid #bbf7d0;padding:10px;border-radius:12px;text-align:center">
+    <div style="font-size:10px;font-weight:800;letter-spacing:1px;color:#059669;margin-bottom:6px;">⏰ SPECIAL TASK ENDS IN</div>
+    <div style="display:flex;gap:6px;justify-content:center;">
+      <div style="background:#fff;border:1px solid #a7f3d0;padding:6px 8px;border-radius:8px;min-width:48px;text-align:center"><b id="cd-special-days" style="font-size:14px;display:block;color:#0f172a">07</b><span style="font-size:8px;color:#64748b">DAYS</span></div>
+      <div style="background:#fff;border:1px solid #a7f3d0;padding:6px 8px;border-radius:8px;min-width:48px;text-align:center"><b id="cd-special-hours" style="font-size:14px;display:block;color:#0f172a">00</b><span style="font-size:8px;color:#64748b">HOURS</span></div>
+      <div style="background:#fff;border:1px solid #a7f3d0;padding:6px 8px;border-radius:8px;min-width:48px;text-align:center"><b id="cd-special-mins" style="font-size:14px;display:block;color:#0f172a">00</b><span style="font-size:8px;color:#64748b">MINS</span></div>
+      <div style="background:#fff;border:1px solid #a7f3d0;padding:6px 8px;border-radius:8px;min-width:48px;text-align:center"><b id="cd-special-secs" style="font-size:14px;display:block;color:#0f172a">00</b><span style="font-size:8px;color:#64748b">SECS</span></div>
+    </div>
+    <div style="font-size:10px;color:#059669;margin-top:6px;font-weight:600">Ends: Sept 17, 2026 10PM WAT • New referrals only since Sept 10</div>
+  </div>
+
+  <div class="progress">
+    <div class="progress-bar"><div class="progress-fill" id="fill-special30" style="width:0%;background:linear-gradient(90deg,#10b981,#059669)"></div></div>
+    <div class="progress-text"><span id="text-special30">0 / 30 (new only)</span><span id="special-new-count" style="color:#10b981;">💵 $30</span></div>
+  </div>
+  <button class="btn-claim locked" id="btn-special30" onclick="claimReward('special30')">🔒 Invite 30 NEW to Unlock</button>
+  <div style="font-size:10px;color:#64748b;margin-top:8px;text-align:center">⚠️ Does NOT count old referrals • Counts only friends who register after Sept 10, 2026 • Instant payout</div>
+</div>
+
+
+<!-- WHATSAPP FOLLOW TASK - 100 CEL - SAME AS FLOATING CHANNEL -->
+<div id="task-whatsapp" class="task-card" style="border:2px solid #25D366;background:linear-gradient(135deg,#ffffff 0%, #f0fdf5 100%);">
+  <span class="badge" id="badge-whatsapp" style="background:#25D366;">100 CEL • EASY</span>
+  <div style="background:#25D366;color:#fff;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:1px;display:inline-flex;align-items:center;gap:4px;margin-bottom:8px">📲 SOCIAL TASK</div>
+  <div class="task-top">
+    <div class="reward-img" style="background:#f0fdf5;border-color:#bbf7d0;">
+      <div style="width:100%;height:100%;display:grid;place-items:center;font-size:32px;">💬</div>
+    </div>
+    <div class="task-info">
+      <h3>Follow WhatsApp Channel = 100 CEL</h3>
+      <p>Follow our official <b>WhatsApp Channel</b> (same as floating button) and earn <b>100 CEL tokens</b> instantly! Stay updated with launch news.</p>
+    </div>
+  </div>
+  <div class="progress" style="margin-top:10px">
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:#64748b;font-weight:700;margin-bottom:6px">
+      <span>Follow channel to unlock</span><span style="color:#25D366;">100 CEL</span>
+    </div>
+  </div>
+  <button class="btn-claim ready" id="btn-whatsapp" onclick="claimWhatsappTask()" style="background:linear-gradient(135deg,#25D366,#128C7E);">📲 Follow & Claim 100 CEL</button>
+  <div style="font-size:10px;color:#64748b;margin-top:8px;text-align:center">One-time task • Uses same channel as floating button • Instant reward</div>
+</div>
+
 <div id="tasksContainer">
+
+
   <div class="task-card" id="task-phone100">
     <div class="badge badge-locked" id="badge-phone100">LOCKED</div>
     <div class="task-top">
@@ -185,6 +251,18 @@ header{display:flex;justify-content:space-between;align-items:center;padding:14p
 </div>
 
 <script src="//api.backendless.com/sdk/js/latest/backendless.min.js"></script>
+
+<!-- WHATSAPP FOLLOW MODAL - SAME CHANNEL AS FLOATING -->
+<div id="whatsappClaimModal" style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:99;padding:16px">
+<div style="background:#fff;border-radius:20px;padding:24px;width:100%;max-width:400px;">
+<h3 style="font-size:18px;color:#0f172a">📱 Follow WhatsApp Channel</h3>
+<p style="color:#64748b;font-size:13px;margin:8px 0 16px">Follow our official WhatsApp channel (same as floating button) to earn 100 CEL instantly!</p>
+<a id="waChannelLink" href="https://whatsapp.com/channel/0029Vb8RiME2ZjCnd1P0Vb1p" target="_blank" onclick="markWaClicked()" style="display:block;background:#25D366;color:#fff;text-align:center;padding:12px;border-radius:12px;font-weight:800;text-decoration:none;margin-bottom:12px">🔗 Open WhatsApp Channel</a>
+<button onclick="submitWhatsappClaim()" style="width:100%;background:#0f172a;color:#fff;border:none;padding:12px;border-radius:12px;font-weight:800;cursor:pointer">✅ I Have Followed - Claim 100 CEL</button>
+<button onclick="document.getElementById('whatsappClaimModal').style.display='none'" style="width:100%;background:#f1f5f9;color:#64748b;border:none;padding:10px;border-radius:12px;font-weight:700;cursor:pointer;margin-top:8px">Cancel</button>
+</div>
+</div>
+
 <script>
 Backendless.initApp('9FCDC961-9B0A-4C69-B461-93E55A07BA66', '1D7B1EB4-11B4-4FE9-99D6-D146155BA699');
 let currentUserEmail = localStorage.getItem('userEmail');
@@ -194,7 +272,9 @@ if(!currentUserEmail) window.location='index.html';
 // 2 WEEKS COUNTDOWN - SAME DEADLINE FOR ALL USERS - Global fixed
 // Global deadline - Started yesterday 1st Sep 10pm WAT + 14 days = 15 Sep 10pm WAT - SAME FOR ALL
 // Change this date to set same deadline for all users
-const GLOBAL_CAMPAIGN_END = "2026-09-15T21:00:00Z"; // 14 days from now - same for all users
+const GLOBAL_CAMPAIGN_END = "2026-09-15T21:00:00Z"; // 14 days from now - same for all users - MAIN CAMPAIGN
+const SPECIAL_CAMPAIGN_START = "2026-09-10T00:00:00Z"; // Start counting from today only
+const SPECIAL_CAMPAIGN_END = "2026-09-17T21:00:00Z"; // 7 days from today - SPECIAL TASK ONLY // 14 days from now - same for all users
 let deadline = new Date(GLOBAL_CAMPAIGN_END).getTime();
 
 function updateCountdown(){
@@ -239,6 +319,7 @@ function checkExpiry(){
 }
 
 let refCount=0;
+let specialRefCount=0;
 let rewards = JSON.parse(localStorage.getItem('taskRewards_'+currentUserEmail)||'{}');
 async function init(){
   initCountdown();
@@ -352,5 +433,60 @@ function copyLink(){ let link=document.getElementById('inviteLink').innerText; n
 function shareLink(){ let link=document.getElementById('inviteLink').innerText; let text=`Join CELCOIN and earn 100 CEL free! Win Phone/Fridge/TV: ${link}`; window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank'); }
 init();
 </script>
+
+<!-- USD WALLET MODAL FOR $30 SPECIAL TASK -->
+<div id="usdWalletModal" style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:99;padding:16px">
+<div style="background:#fff;border-radius:20px;padding:24px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+<h3 style="font-size:18px;color:#0f172a;display:flex;align-items:center;gap:8px">💵 Claim $30 Instant Reward</h3>
+<p style="color:#64748b;font-size:13px;margin:8px 0 16px;line-height:1.4">You invited 30 NEW friends! Enter your USD wallet address (USDT TRC20 / BEP20) to receive $30 instantly after admin verification.</p>
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:12px;border-radius:12px;margin-bottom:12px">
+<div style="font-size:11px;font-weight:800;color:#059669;letter-spacing:0.5px">AMOUNT</div>
+<div style="font-size:24px;font-weight:800;color:#0f172a">$30 USD</div>
+<div style="font-size:11px;color:#64748b">Instant payout after verification</div>
+</div>
+<label style="font-size:12px;font-weight:700;color:#0f172a;display:block;margin-bottom:6px">USD Wallet Address (USDT TRC20/BEP20) *</label>
+<input id="usdWalletAddress" placeholder="e.g. TAbcd... or 0x1234..." style="width:100%;padding:12px;border-radius:10px;border:1px solid #e2e8f0;background:#f8fafc;color:#0f172a;margin-bottom:12px;font-size:13px;font-family:monospace">
+<label style="font-size:12px;font-weight:700;color:#0f172a;display:block;margin-bottom:6px">Wallet Type *</label>
+<select id="usdWalletType" style="width:100%;padding:12px;border-radius:10px;border:1px solid #e2e8f0;background:#f8fafc;color:#0f172a;margin-bottom:12px;font-size:13px">
+<option value="USDT-TRC20">USDT TRC20 (Tron)</option>
+<option value="USDT-BEP20">USDT BEP20 (BSC)</option>
+<option value="USDT-ERC20">USDT ERC20 (Ethereum)</option>
+</select>
+<div style="display:flex;gap:8px;margin-top:16px">
+<button onclick="submitUsdClaim()" style="flex:1;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;padding:12px;border-radius:12px;font-weight:800;cursor:pointer">Submit Wallet for Payment</button>
+<button onclick="document.getElementById('usdWalletModal').style.display='none'" style="background:#f1f5f9;color:#64748b;border:none;padding:12px 16px;border-radius:12px;font-weight:700;cursor:pointer">Cancel</button>
+</div>
+</div>
+</div>
+
+<!-- WHATSAPP FOLLOW MODAL -->
+<div id="whatsappClaimModal" style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:99;padding:16px">
+<div style="background:#fff;border-radius:20px;padding:24px;width:100%;max-width:400px;">
+<h3 style="font-size:18px;color:#0f172a">📱 Follow WhatsApp Channel</h3>
+<p style="color:#64748b;font-size:13px;margin:8px 0 16px">Follow our official WhatsApp channel to earn 100 CEL instantly!</p>
+<a href="https://whatsapp.com/channel/0029Vb8RiME2ZjCnd1P0Vb1p" target="_blank" onclick="markWaClicked()" style="display:block;background:#25D366;color:#fff;text-align:center;padding:12px;border-radius:12px;font-weight:800;text-decoration:none;margin-bottom:12px">🔗 Open WhatsApp Channel</a>
+<button onclick="submitWhatsappClaim()" style="width:100%;background:#0f172a;color:#fff;border:none;padding:12px;border-radius:12px;font-weight:800;cursor:pointer">✅ I Have Followed - Claim 100 CEL</button>
+<button onclick="document.getElementById('whatsappClaimModal').style.display='none'" style="width:100%;background:#f1f5f9;color:#64748b;border:none;padding:10px;border-radius:12px;font-weight:700;cursor:pointer;margin-top:8px">Cancel</button>
+</div>
+</div>
+
+<!-- ONE-TIME INTRO MODAL -->
+<div id="introSpecialModal" style="position:fixed;inset:0;background:rgba(15,23,42,0.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:200;padding:16px">
+  <div style="background:#fff;border-radius:24px;padding:0;width:100%;max-width:420px;box-shadow:0 24px 64px rgba(0,0,0,0.3);overflow:hidden">
+    <div style="background:linear-gradient(135deg,#0f172a 0%, #1e293b 50%, #134e4a 100%);padding:20px 24px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:48px;height:48px;background:linear-gradient(135deg,#10b981,#059669);border-radius:14px;display:grid;place-items:center;font-size:24px">💵</div>
+        <div><div style="color:#fde68a;font-size:10px;font-weight:800;letter-spacing:1.5px">NEW • LIMITED TIME</div><div style="color:#fff;font-size:18px;font-weight:800">Special Task Introduced!</div></div>
+      </div>
+    </div>
+    <div style="padding:24px">
+      <h3 style="font-size:16px;color:#0f172a;font-weight:800">Earn Instantly While You Wait for Launch 🚀</h3>
+      <p style="font-size:13px;color:#475569;margin:12px 0;line-height:1.6">We introduced a <b>SPECIAL TASK</b> that lets you earn <b style="color:#059669">immediately upon completion!</b></p>
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:12px;margin:12px 0"><div style="display:flex;gap:10px"><div style="font-size:18px">⚠️</div><div style="font-size:12px;color:#065f46"><b>Note:</b> This is <b>NOT your CELCOIN</b>. This is a way of letting you earn <b>extra money instantly</b> in USD while you wait for official launch. Your CELCOIN remains untouched!</div></div></div>
+      <button onclick="closeIntroModal()" style="width:100%;background:#0f172a;color:#fff;border:none;padding:14px;border-radius:12px;font-weight:800;font-size:14px;cursor:pointer">Got it, Show Me the Task 🚀</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
