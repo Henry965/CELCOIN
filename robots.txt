@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://celcoin.onrender.com/sitemap.xml
