@@ -3,22 +3,6 @@
 <head>
 <title>CELCOIN - Mine $0.05 Per Coin Daily</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<meta name="google-site-verification" content="0be1c754ccf5390a" />
-<meta name="description" content="CELCOIN - Mine $0.05 per coin daily. Join 50,000+ Nigerians earning free crypto. Daily tasks, referrals & instant withdrawal. Start mining now!" />
-<meta name="keywords" content="celcoin, free crypto mining, mine crypto Nigeria, earn crypto daily, free bitcoin Nigeria, crypto tasks" />
-<meta name="author" content="CELCOIN" />
-<!-- Open Graph for WhatsApp/Facebook -->
-<meta property="og:title" content="CELCOIN - Mine $0.05 Per Coin Daily" />
-<meta property="og:description" content="Join 50,000+ Nigerians earning free crypto daily. Complete tasks, invite friends & withdraw instantly." />
-<meta property="og:url" content="https://celcoin.site/" />
-<meta property="og:type" content="website" />
-<meta property="og:image" content="https://celcoin.site/logo.png" />
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="CELCOIN - Mine $0.05 Per Coin Daily" />
-<meta name="twitter:description" content="Mine free crypto daily. Tasks, referrals & instant withdrawal." />
-
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif}
@@ -150,7 +134,7 @@ footer{background:#fff;text-align:center;padding:18px;font-size:11px;color:#94a3
       <input id="regEmail" class="input" type="email" placeholder="Email address">
       <input id="regPassword" class="input" type="password" placeholder="Password (min 6 chars)">
       <input id="regReferral" class="input" placeholder="Referral Email (Optional)">
-      <div id="refDetected" class="ref-note" style="display:none">🎁 Referred by <b id="refEmailShow"></b> — you both get 50 CEL!</div>
+      <div id="refDetected" class="ref-note" style="display:none">🎁 Referred by <b id="refEmailShow"></b> — you both get 100 CEL!</div>
       <button class="btn-modal teal" onclick="register()">Create Account & Start Mining ⛏</button>
     </div>
   </div>
@@ -180,12 +164,12 @@ async function register(){
   let ref=document.getElementById('regReferral').value.trim().toLowerCase();
   if(!name||!email||!pass) return alert('Fill all fields');
   try{
-    let user=new Backendless.User(); user.email=email; user.password=pass; user.name=name; user.balance=ref?50:0; user.referrals=0; user.referral=ref||null;
+    let user=new Backendless.User(); user.email=email; user.password=pass; user.name=name; user.balance=ref?100:0; user.referrals=0; user.referral=ref||null;
     await Backendless.UserService.register(user);
-    if(ref){ try{ let q="email = '" + ref + "'"; let rr=await Backendless.Data.of("Users").findFirst({where:q}); if(rr){ rr.balance=(rr.balance||0)+50; rr.referrals=(rr.referrals||0)+1; await Backendless.Data.of("Users").save(rr); } }catch(e){} }
+    if(ref){ try{ let q="email = '" + ref + "'"; let rr=await Backendless.Data.of("Users").findFirst({where:q}); if(rr){ rr.balance=(rr.balance||0)+100; rr.referrals=(rr.referrals||0)+1; await Backendless.Data.of("Users").save(rr); } }catch(e){} }
     let logged=await Backendless.UserService.login(email,pass,true);
     localStorage.setItem('isAdmin','false'); localStorage.setItem('userEmail',logged.email); localStorage.setItem('userId',logged.objectId);
-    alert('🎉 Registered! '+(ref?'50 CEL bonus! ':'')+'Start mining!'); window.location='dashboard.html';
+    alert('🎉 Registered! '+(ref?'100 CEL bonus! ':'')+'Start mining!'); window.location='dashboard.html';
   }catch(e){ alert(e.message); }
 }
 async function login(){
