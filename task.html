@@ -20,6 +20,10 @@ header{display:flex;justify-content:space-between;align-items:center;padding:14p
 .task-card h2{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;color:#0f172a;text-align:center;line-height:1.2}
 .task-card h2 span{color:#ff7700}
 .task-card p{font-size:13px;color:#64748b;text-align:center;margin-top:8px;line-height:1.5}
+.countdown{background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:16px;padding:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0;text-align:center}
+.cd-box{background:rgba(255,255,255,0.08);border-radius:12px;padding:10px 4px;border:1px solid rgba(255,255,255,0.1)}
+.cd-box b{font-size:20px;color:#fbbf24;display:block;font-family:'Space Grotesk',sans-serif}
+.cd-box span{font-size:9px;color:rgba(255,255,255,0.6);font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
 .stat{background:#fffbeb;border:1px solid #fde68a;padding:14px;border-radius:16px;text-align:center}
 .stat b{font-size:22px;color:#92400e;display:block;font-family:'Space Grotesk',sans-serif}
@@ -41,13 +45,20 @@ header{display:flex;justify-content:space-between;align-items:center;padding:14p
 <body>
 <header>
 <div class="logo-wrap"><img src="logo.png" class="logo-img"><div class="logo-text"><b>CELCOIN</b><span>celcoin mining network</span></div></div>
-<div style="background:#fffbeb;border:1px solid #fde68a;padding:6px 10px;border-radius:20px;font-size:10px;font-weight:800;color:#92400e">TASK</div>
+<div style="background:#fffbeb;border:1px solid #fde68a;padding:6px 10px;border-radius:20px;font-size:10px;font-weight:800;color:#92400e">SEPT 23 - OCT 7 • 14 DAYS</div>
 </header>
 <div class="container">
 <div class="task-card">
 <div class="icon-box">🎁</div>
 <h2>Invite Friends & Win <span>$100 Amazon Gift Card</span></h2>
 <p>Complete this task by inviting your friends to join CELCOIN. Top 5 referrers will win $100 Amazon Gift Card each!</p>
+<div class="countdown">
+<div class="cd-box"><b id="cdDays">14</b><span>Days</span></div>
+<div class="cd-box"><b id="cdHours">00</b><span>Hours</span></div>
+<div class="cd-box"><b id="cdMins">00</b><span>Mins</span></div>
+<div class="cd-box"><b id="cdSecs">00</b><span>Secs</span></div>
+</div>
+<div style="text-align:center;font-size:10px;color:#92400e;font-weight:700;letter-spacing:0.5px;margin-bottom:4px">⏰ TASK ENDS IN 2 WEEKS • HURRY UP!</div>
 <div class="stats">
 <div class="stat"><b id="myRefs">0</b><span>Your Referrals</span></div>
 <div class="stat"><b>$100</b><span>Reward Each</span></div>
@@ -80,14 +91,47 @@ Backendless.initApp('9FCDC961-9B0A-4C69-B461-93E55A07BA66', '1D7B1EB4-11B4-4FE9-
 let currentUserEmail = localStorage.getItem('userEmail');
 let currentUserId = localStorage.getItem('userId');
 if(!currentUserEmail) window.location='index.html';
+// ===== CONFIG: 2 WEEKS FROM SEPTEMBER 23 - HIDDEN LOGIC =====
+const COMPETITION_START_DATE = new Date('2026-09-23T00:00:00');
+const COMPETITION_END_DATE = new Date('2026-10-07T23:59:59');
+let endDate = COMPETITION_END_DATE;
+function updateCountdown(){
+  let now = new Date().getTime();
+  let distance = endDate.getTime() - now;
+  if(distance < 0){
+    document.getElementById('cdDays').innerText = '00';
+    document.getElementById('cdHours').innerText = '00';
+    document.getElementById('cdMins').innerText = '00';
+    document.getElementById('cdSecs').innerText = '00';
+    return;
+  }
+  let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  let mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  let secs = Math.floor((distance % (1000 * 60)) / 1000);
+  document.getElementById('cdDays').innerText = days.toString().padStart(2,'0');
+  document.getElementById('cdHours').innerText = hours.toString().padStart(2,'0');
+  document.getElementById('cdMins').innerText = mins.toString().padStart(2,'0');
+  document.getElementById('cdSecs').innerText = secs.toString().padStart(2,'0');
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
 async function init(){
   try{
     let user = await Backendless.Data.of("Users").findById(currentUserId);
     if(!user) return;
-    let refs = user.referrals||0;
-    document.getElementById('myRefs').innerText = refs;
-    document.getElementById('progText').innerText = refs + ' referrals';
-    document.getElementById('progBar').style.width = Math.min(100, (refs/10)*100) + '%';
+    let startTimestamp = COMPETITION_START_DATE.getTime();
+    let query = "referral = '" + currentUserEmail + "'";
+    let referredUsers = await Backendless.Data.of("Users").find({where: query, pageSize: 100});
+    let filteredFromToday = referredUsers.filter(u => {
+      if(!u.created) return false;
+      let createdTime = new Date(u.created).getTime();
+      return createdTime >= startTimestamp;
+    });
+    let competitionCount = filteredFromToday.length;
+    document.getElementById('myRefs').innerText = competitionCount;
+    document.getElementById('progText').innerText = competitionCount + ' referrals';
+    document.getElementById('progBar').style.width = Math.min(100, (competitionCount/10)*100) + '%';
     let link = window.location.origin + '/?ref=' + encodeURIComponent(currentUserEmail);
     document.getElementById('refLink').innerText = link;
   }catch(e){ console.log(e); }
@@ -98,7 +142,7 @@ function copyLink(){
 }
 function shareWhatsApp(){
   let link = document.getElementById('refLink').innerText;
-  let text = `🎁 Join CELCOIN & win $100 Amazon Gift Card! Use my link: ${link} - Top 5 referrers win $100 each!`;
+  let text = `🎁 Join CELCOIN & win $100 Amazon Gift Card! Use my link: ${link} - Top 5 referrers win $100 each! Ends in 2 weeks!`;
   window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
 }
 init();
