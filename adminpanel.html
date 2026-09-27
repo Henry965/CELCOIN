@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel - CELCOIN • Task Sept 23 - Oct 7</title>
+<title>Admin Panel - CELCOIN • Sept 23 - Oct 7 FIXED</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif}
@@ -17,4 +17,197 @@ header{display:flex;justify-content:space-between;align-items:center;background:
 .card span{font-size:11px;color:#64748b;font-weight:700;text-transform:uppercase}
 .card.highlight{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;border:none}
 .card.highlight b{color:#fbbf24}
-.card.highlight span{color:rgba(255,
+.card.highlight span{color:rgba(255,255,255,0.6)}
+.countdown{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:20px;border-radius:20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.cd{display:flex;gap:10px}
+.cd-box{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);padding:10px 14px;border-radius:12px;text-align:center;min-width:60px}
+.cd-box b{font-size:20px;color:#fbbf24;display:block}
+.cd-box span{font-size:9px;color:rgba(255,255,255,0.6);font-weight:700;text-transform:uppercase}
+.btn{padding:10px 16px;border:none;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer}
+.btn-dark{background:#0f172a;color:#fff}
+.btn-amz{background:#ff9900;color:#000}
+.btn-outline{background:#fff;border:1px solid #e2e8f0;color:#0f172a}
+.table-wrap{background:#fff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,0.04)}
+.table-header{padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.table-header h3{font-size:14px;font-weight:800;color:#0f172a}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#f8fafc;padding:12px 14px;text-align:left;font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:0.5px}
+td{padding:12px 14px;border-top:1px solid #f1f5f9;color:#0f172a}
+tr.top5{background:#fffbeb}
+.badge-win{background:#22c55e;color:#fff;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:800}
+.badge-no{background:#e2e8f0;color:#64748b;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.search{padding:10px 14px;border:1px solid #e2e8f0;border-radius:10px;width:220px;font-size:12px}
+#loginBox{position:fixed;inset:0;background:#0f172a;display:flex;justify-content:center;align-items:center;z-index:9999;padding:20px}
+.login-card{background:#fff;padding:28px;border-radius:20px;max-width:400px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,0.4)}
+.input{width:100%;padding:14px;border:1.5px solid #e2e8f0;border-radius:12px;margin:8px 0;font-size:14px}
+</style>
+</head>
+<body>
+<div id="loginBox">
+<div class="login-card">
+<div style="text-align:center;margin-bottom:16px">
+<div style="width:60px;height:60px;background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:16px;display:grid;place-items:center;margin:0 auto 10px;font-size:28px">🔐</div>
+<h2 style="font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:20px">Admin Panel Fixed</h2>
+<p style="font-size:12px;color:#64748b;margin-top:4px">Sept 23 - Oct 7 • Private Leaderboard</p>
+</div>
+<input id="adminEmail" class="input" type="email" value="philip00mark@yahoo.com" placeholder="Admin Email">
+<input id="adminPass" class="input" type="password" placeholder="Password: Cshinemy00">
+<button class="btn btn-dark" style="width:100%;padding:14px;margin-top:10px" onclick="adminLogin()">Login to Dashboard →</button>
+<div id="loginErr" style="color:red;font-size:12px;margin-top:10px;display:none"></div>
+<div style="background:#fffbeb;border:1px solid #fde68a;padding:10px;border-radius:10px;margin-top:12px;font-size:11px;color:#92400e">
+<b>Fix:</b> This version shows login screen first, won't go blank. Use email above + your password Cshinemy00
+</div>
+</div>
+</div>
+
+<header>
+<div class="logo">CELCOIN • ADMIN • PRIVATE LEADERBOARD</div>
+<div style="display:flex;gap:8px;align-items:center">
+<span class="badge">SEPT 23 - OCT 7 • 14 DAYS • FIXED</span>
+<button class="btn btn-outline" style="background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.2)" onclick="logout()">Logout</button>
+</div>
+</header>
+
+<div class="container">
+<div class="countdown">
+<div>
+<div style="font-size:12px;font-weight:800;letter-spacing:1px;opacity:0.8">🎁 TASK: WIN $100 AMAZON GIFT CARD</div>
+<div style="font-size:20px;font-weight:800;margin-top:4px">Sept 23 - Oct 7 • 14 Days • Top 5 Wins</div>
+<div style="font-size:11px;opacity:0.6;margin-top:4px">Referrals counted from Sept 23 only • Private - users don't see this</div>
+</div>
+<div class="cd">
+<div class="cd-box"><b id="cdD">14</b><span>Days</span></div>
+<div class="cd-box"><b id="cdH">00</b><span>Hours</span></div>
+<div class="cd-box"><b id="cdM">00</b><span>Mins</span></div>
+<div class="cd-box"><b id="cdS">00</b><span>Secs</span></div>
+</div>
+</div>
+
+<div class="grid">
+<div class="card"><b id="totalUsers">0</b><span>Total Users (All Time)</span></div>
+<div class="card"><b id="totalRefs">0</b><span>Total Referrals (All Time)</span></div>
+<div class="card highlight"><b id="compUsers">0</b><span>Users Joined From Sept 23</span></div>
+<div class="card highlight"><b id="compRefs">0</b><span>Competition Refs (Sept 23+)</span></div>
+<div class="card"><b id="topRefs">0</b><span>Highest Refs (Competition)</span></div>
+<div class="card" style="background:linear-gradient(135deg,#ff9900,#ff7700);border:none"><b id="winners" style="color:#000">$500</b><span style="color:#000">Total Prize • $100 x 5</span></div>
+</div>
+
+<div class="table-wrap">
+<div class="table-header">
+<h3>🏆 Private Leaderboard - Sept 23 to Oct 7 - FIXED VERSION</h3>
+<div style="display:flex;gap:8px">
+<input id="search" class="search" placeholder="Search email..." oninput="filterTable()">
+<button class="btn btn-dark" onclick="exportCSV()">📥 Export CSV</button>
+<button class="btn btn-amz" onclick="loadData()">🔄 Refresh</button>
+</div>
+</div>
+<div style="overflow:auto;max-height:650px">
+<table>
+<thead><tr><th>#</th><th>User</th><th>Email</th><th>All Time</th><th>Comp Sept23+</th><th>Joined</th><th>Status</th><th>Action</th></tr></thead>
+<tbody id="tbody"><tr><td colspan="8" style="text-align:center;padding:30px;color:#94a3b8">Login first...</td></tr></tbody>
+</table>
+</div>
+<div style="padding:14px 20px;background:#fffbeb;border-top:1px solid #fde68a;font-size:11px;color:#92400e">
+<b>Fixed:</b> Admin login is now inside adminpanel.html. No more blank screen. Referrals filtered <code>created >= Sept 23</code> only.
+</div>
+</div>
+</div>
+
+<script src="//api.backendless.com/sdk/js/latest/backendless.min.js"></script>
+<script>
+Backendless.initApp('9FCDC961-9B0A-4C69-B461-93E55A07BA66', '1D7B1EB4-11B4-4FE9-99D6-D146155BA699');
+const START_DATE = new Date('2026-09-23T00:00:00');
+const END_DATE = new Date('2026-10-07T23:59:59');
+
+function checkAdmin(){
+  let isAdmin = localStorage.getItem('isAdmin');
+  let box = document.getElementById('loginBox');
+  if(isAdmin === 'true'){
+    box.style.display='none';
+    loadData();
+  } else {
+    box.style.display='flex';
+  }
+}
+
+function adminLogin(){
+  let email = document.getElementById('adminEmail').value.trim().toLowerCase();
+  let pass = document.getElementById('adminPass').value;
+  let err = document.getElementById('loginErr');
+  if(email === 'philip00mark@yahoo.com' && pass === 'Cshinemy00'){
+    localStorage.setItem('isAdmin','true');
+    localStorage.setItem('userEmail',email);
+    document.getElementById('loginBox').style.display='none';
+    loadData();
+  } else {
+    err.style.display='block';
+    err.innerText = 'Wrong credentials. Email: philip00mark@yahoo.com / Password: Cshinemy00';
+  }
+}
+
+function updateCountdown(){
+  let now = Date.now();
+  let dist = END_DATE.getTime() - now;
+  if(dist < 0){
+    document.getElementById('cdD').innerText='00';
+    document.getElementById('cdH').innerText='00';
+    document.getElementById('cdM').innerText='00';
+    document.getElementById('cdS').innerText='00';
+    return;
+  }
+  document.getElementById('cdD').innerText = String(Math.floor(dist/(1000*60*60*24))).padStart(2,'0');
+  document.getElementById('cdH').innerText = String(Math.floor((dist%(1000*60*60*24))/(1000*60*60))).padStart(2,'0');
+  document.getElementById('cdM').innerText = String(Math.floor((dist%(1000*60*60))/(1000*60))).padStart(2,'0');
+  document.getElementById('cdS').innerText = String(Math.floor((dist%(1000*60))/1000)).padStart(2,'0');
+}
+setInterval(updateCountdown,1000);
+updateCountdown();
+
+let competitionData = [];
+async function loadData(){
+  document.getElementById('tbody').innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px">Loading from Backendless... Sept 23 filter active</td></tr>';
+  try{
+    let users = await Backendless.Data.of("Users").find({pageSize: 100});
+    let more = users;
+    while(more.length === 100){
+      let next = await Backendless.Data.of("Users").find({pageSize:100, offset: users.length});
+      if(!next.length) break;
+      users = users.concat(next);
+      more = next;
+      if(users.length >= 1000) break;
+    }
+    document.getElementById('totalUsers').innerText = users.length;
+    document.getElementById('totalRefs').innerText = users.reduce((s,u)=>s+(u.referrals||0),0);
+    let ts = START_DATE.getTime();
+    document.getElementById('compUsers').innerText = users.filter(u=>u.created && new Date(u.created).getTime()>=ts).length;
+    let map = {};
+    users.forEach(u=>{
+      if(!u.referral || !u.created) return;
+      if(new Date(u.created).getTime() < ts) return;
+      let ref = u.referral.toLowerCase();
+      map[ref] = (map[ref]||0)+1;
+    });
+    competitionData = users.map(u=>({...u, competitionRefs: map[(u.email||'').toLowerCase()]||0})).sort((a,b)=>b.competitionRefs-a.competitionRefs);
+    document.getElementById('compRefs').innerText = Object.values(map).reduce((a,b)=>a+b,0);
+    document.getElementById('topRefs').innerText = competitionData[0]?.competitionRefs || 0;
+    renderTable(competitionData);
+  }catch(e){
+    document.getElementById('tbody').innerHTML = '<tr><td colspan="8" style="text-align:center;color:red;padding:20px">Error: '+e.message+'<br><small>Check internet & Backendless</small></td></tr>';
+  }
+}
+function renderTable(data){
+  let html='';
+  data.forEach((u,i)=>{
+    let top = i<5 && u.competitionRefs>0;
+    html += `<tr${top?' class="top5"':''}><td><b>#${i+1}</b> ${top?'🏆':''}</td><td>${(u.name||'No name').substring(0,20)}</td><td style="font-family:monospace;font-size:11px">${u.email||''}</td><td>${u.referrals||0}</td><td><b>${u.competitionRefs}</b></td><td style="font-size:11px">${u.created?new Date(u.created).toLocaleDateString():'-'}</td><td>${top?'<span class="badge-win">🏆 TOP '+(i+1)+' WINNER</span>':'<span class="badge-no">'+u.competitionRefs+'</span>'}</td><td><button class="btn btn-outline" style="padding:6px 10px;font-size:10px" onclick="navigator.clipboard.writeText('${u.email}').then(()=>alert('Copied: ${u.email}'))">Copy</button></td></tr>`;
+  });
+  document.getElementById('tbody').innerHTML = html || '<tr><td colspan="8" style="text-align:center;padding:20px">No users Sept 23-Oct 7 yet</td></tr>';
+}
+function filterTable(){ let q=document.getElementById('search').value.toLowerCase(); renderTable(competitionData.filter(u=>(u.email||'').toLowerCase().includes(q) || (u.name||'').toLowerCase().includes(q))); }
+function logout(){ localStorage.clear(); location.reload(); }
+function exportCSV(){ let top5=competitionData.slice(0,5).filter(u=>u.competitionRefs>0); let csv='Rank,Email,CompetitionRefs Sept23+
+'+top5.map((u,i)=>`${i+1},${u.email},${u.competitionRefs}`).join('\n'); let blob=new Blob([csv],{type:'text/csv'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='celcoin_top5_sept23_oct7_FIXED.csv'; a.click(); }
+window.onload = checkAdmin;
+</script>
+</body>
+</html>
