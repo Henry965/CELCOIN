@@ -51,9 +51,10 @@ header{display:flex;justify-content:space-between;align-items:center;padding:14p
   </div>
 </header>
 <div class="container">
+<div id="rallyBanner" style="background:linear-gradient(90deg,#FFD700,#FFA500);color:#000;padding:10px 0;overflow:hidden;font-weight:800;font-size:11px;letter-spacing:0.5px;text-align:center;margin-bottom:12px;border-radius:12px">🔥 RALLY LIVE: Only NEW referrals since Nov 11 count for Special Tasks (10=500, 50=1000, 100=2000 CEL) • <span id="rallyCountBadge">0 NEW</span></div>
   <div class="hero">
     <h2>👥 Invite & Earn</h2>
-    <p>You and your friend both get <b style="color:#6ee7b7">50 CEL</b> when they mine</p>
+    <p>You and your friend both get <b style="color:#6ee7b7">100 CEL</b> when they mine</p>
   </div>
   <div class="stat-row">
     <div class="stat-card"><b id="refCount">0</b><span>Total Referred</span></div>
@@ -104,7 +105,7 @@ async function loadReferrals(){
       let html='';
       referredUsers.forEach(u=>{
         let initial = (u.name||u.email||'?').charAt(0).toUpperCase();
-        html += `<div class="ref-list-item"><div class="ref-avatar">${initial}</div><div style="flex:1"><b style="font-size:13px;color:#0f172a">${u.name||'User'}</b><br><small style="color:#64748b;font-size:11px">${u.email}</small></div><div style="background:#ecfdf5;color:#065f46;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:700">+50 CEL</div></div>`;
+        html += `<div class="ref-list-item"><div class="ref-avatar">${initial}</div><div style="flex:1"><b style="font-size:13px;color:#0f172a">${u.name||'User'}</b><br><small style="color:#64748b;font-size:11px">${u.email}</small></div><div style="background:#ecfdf5;color:#065f46;padding:4px 8px;border-radius:20px;font-size:10px;font-weight:700">+100 CEL</div></div>`;
       });
       document.getElementById('refList').innerHTML = html;
     }
@@ -118,10 +119,36 @@ function copyRef(){
 }
 function shareLink(){
   let link = document.getElementById('refLink').value;
-  let text = `Join CELCOIN and earn 50 CEL free! Use my link: ${link}`;
+  let text = `Join CELCOIN and earn 100 CEL free! Use my link: ${link}`;
   window.open('https://wa.me/?text='+encodeURIComponent(text), '_blank');
 }
 loadReferrals();
+</script>
+<script>
+// PATCH: Count only NEW referrals since Nov 11 for rally
+const RALLY_START = new Date('2026-11-11T00:00:00');
+function patchReferralsForRally(){
+  try{
+    // Hook into existing referral list if available
+    // Wait for original load
+    setTimeout(async ()=>{
+      try{
+        let email = localStorage.getItem('userEmail');
+        if(!email) return;
+        let where = "(referredBy = '" + email + "' OR referral = '" + email + "')";
+        let users = await Backendless.Data.of("Users").find({where: where, pageSize: 100, sortBy: ["created DESC"]});
+        let rallyNew = users.filter(u=>{ if(!u.created) return false; return new Date(u.created).getTime() >= RALLY_START.getTime(); });
+        let badge = document.getElementById('rallyCountBadge');
+        if(badge) badge.innerText = rallyNew.length + ' NEW rally referrals';
+        // Update any element that shows referrals count for rally
+        let rallyElements = document.querySelectorAll('#rallyRefs, #rallyCount');
+        rallyElements.forEach(el=>{ el.innerText = rallyNew.length; });
+        console.log('Rally: Total', users.length, 'New since Nov 11:', rallyNew.length);
+      }catch(e){ console.log('Rally patch error', e); }
+    }, 1500);
+  }catch(e){}
+}
+patchReferralsForRally();
 </script>
 </body>
 </html>
